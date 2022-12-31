@@ -1,17 +1,19 @@
 .card-product {
   overflow: hidden;
-  height: 120px;
   background: white;
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
-  display: flex;
   align-items: center;
   max-width: 40%;
+  border-radius: 8px;
+  margin: 2em 0;
 }
 
 .card-product img {
-  height: 100%;
-  width: 20%;
-  object-fit: cover;
+  max-height: 20em;
+  margin: 1em 0;
+  image-rendering: auto;
+  width: 100%;
+  object-fit: center;
 }
 
 .card-product h2 {
@@ -30,4 +32,9 @@
 
 .card-product .card-product-infos {
   padding: 16px;
+}
+
+.recipes {
+  display: flex;
+  justify-content: space-around;
 }

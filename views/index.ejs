@@ -3,26 +3,33 @@
 
 <%- include("includes/navigation.ejs") %>
 <h1 class="text-center">coucou index </h1>
+<div class="container">
+  <div class="recipes">
+    <% if (recipes.length > 0) { %>
+      <% for(let recipe of recipes){ %>
+        <div class="card-product">
+          <h2 class="text-center"> <%=recipe.names%></h2>
+          <img src="<%= recipe.image%>" />
+          <div class="card-product-infos">
+            <p> <%= recipe.description%></p>
+            <p>Preparation time:  <%= recipe.time%>Minutes</p>
+            <button class="btn btn-danger">
+              <a href="/:id/recipe" class="text-white text-decoration-none"> Delete recipe </a>
+            </button>
+            <button class="btn btn-danger">
+              <a href="/recipes/<%=recipe.id%>" class="text-white text-decoration-none"> See the full recipe </a>
+            </button>
 
-<% if (recipes.length > 0) { %>
-  <% for(let recipe of recipes){ %>
-    <div class="card-product">
-      <img src="<%= recipe.image%>" />
-      <div class="card-product-infos">
-        <h2> <%=recipe.name%></h2>
-        <p> <%= recipe.description%></p>
-        <p> <%= recipe.description%></p>
-        <button class="btn btn-danger">
-          <a href="/:id/recipe" class="text-white text-decoration-none"> Delete recipe </a>
-        </button>
-      </div>
-    </div>
-    <% }%>
-    <% } else { %>
-    <h1>No Recipes Found!</h1>
-<%} %>
+          </div>
+        </div>
+        <% }%>
+        <% } else { %>
+        <h1>No Recipes Found!</h1>
+    <%} %>
+  </div>
 
-<button class="btn btn-primary">
-  <a href="/add-recipe" class="text-white text-decoration-none"> Add a recipe </a>
-</button>
+  <button class="btn btn-primary">
+    <a href="/add-recipe" class="text-white text-decoration-none"> Add a recipe </a>
+  </button>
+</div>
 <%- include("includes/end.ejs") %>
