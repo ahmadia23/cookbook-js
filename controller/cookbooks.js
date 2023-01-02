@@ -3,6 +3,7 @@ const cookbooks = []
 exports.getAddCookbook = (req,res, next) => {
   res.render("../views/new-cookbook", {
     pageTitle: "new cookbook",
+    editing: false
   });
 }
 exports.postAddCookbook =  (req,res, next) => {

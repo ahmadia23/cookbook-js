@@ -7,10 +7,10 @@ const recipes = [];
 exports.getRecipe = (req,res, next) => {
   const id = req.params.id
     Recipe.findById(id)
-    .then(recipe => {
+    .then(([recipe]) => {
       res.render("recipe-detail", {
         pageTitle: "recipe-detail",
-        recipes: recipe
+        recipe: recipe
       });
     })
     .catch(err => {
@@ -58,17 +58,48 @@ exports.postAddRecipe =  (req,res, next) => {
 }
 
 exports.getEditRecipe =  (req,res, next) => {
-  res.render("../views/edit-recipe", {
-    pageTitle: "Edit Recipe",
-  });
+  const editMode = req.query.edit;
+   console.log(editMode)
+  if (!editMode) {
+    return res.redirect('/');
+  }
+  const id = req.params.id;
+  Recipe.findById(id)
+    .then(([recipe]) => {
+      res.render('add-recipe', {
+        pageTitle: 'Edit Product',
+        editing: editMode,
+        path: '/edit-product',
+        recipe: recipe[0]
+      });
+    })
+    .catch(err => console.log(err));
 }
 
+
 exports.postEditRecipe =  (req,res, next) => {
-  recipes.push({
-    name: req.body.recipe,
-    description: req.body.description,
-    time: req.body.time,
-    image: req.body.url
-  })
-  res.redirect("/recipes");
+    const id = req.body.id;
+    const name = req.body.recipe;
+    const description = req.body.description;
+    const time  = req.body.time;
+    const url =  req.body.url;
+    const recipe =  new Recipe(
+      id,
+      name,
+      description,
+      time,
+      url
+    )
+    recipe.save();
+    res.redirect("/recipes");
+}
+
+exports.postDeleteRecipe =  (req,res, next) => {
+    const id = req.body.id;
+    console.log(id);
+    Recipe.deleteById(id)
+      .then(()=> {
+        res.redirect("/recipes");
+      })
+      .catch((err)=> {console.log(err)});
 }

@@ -1,0 +1,17 @@
+<%- include("includes/head.ejs") %>
+</head>
+<%- include("includes/navigation.ejs") %>
+<h1 class="text-center">coucou show</h1>
+<div class="container">
+  <div class="card p-3">
+    <h3 class="text-center my-4" > <%=recipe[0].names%></h3>
+    <p><%= recipe[0].description %>   </p>
+    <p>Preparation time: <%= recipe[0].time%> Minutes</p>
+    <p> <%= recipe[0].price %> </p>
+  </div>
+</div>
+<button class="btn btn-danger" >
+  <a href="/delete-recipe/<%=recipe[0].id%>" class="text-white text-decoration-none"> Delete recipe </a>
+  <input type="hidden" name="id" value="<%=recipe[0].id%>">
+</button>
+<%- include("includes/end.ejs") %>

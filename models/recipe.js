@@ -24,7 +24,12 @@ module.exports = class Recipe {
     return db.execute("SELECT * FROM recipes WHERE recipes.id = ?", [id]);
   }
 
-  static deleteById(){
+  static deleteById(id){
+    return db.execute("DELETE FROM recipes WHERE id = ?" [id]);
+  }
+
+  update(id, names, description, time, image){
+    return db.execute(`UPDATE recipes SET names =${names}, description = ${description}, time = ${time} image = ${image} WHERE id = ${id};`)
 
   }
 }
