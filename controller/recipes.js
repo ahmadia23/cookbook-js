@@ -78,20 +78,24 @@ exports.getEditRecipe =  (req,res, next) => {
 
 
 exports.postEditRecipe =  (req,res, next) => {
-    const id = req.body.id;
-    const name = req.body.recipe;
-    const description = req.body.description;
-    const time  = req.body.time;
-    const url =  req.body.url;
-    const recipe =  new Recipe(
-      id,
-      name,
-      description,
-      time,
-      url
-    )
-    recipe.save();
-    res.redirect("/recipes");
+  const id = req.body.id;
+  const name = req.body.recipe;
+  const description = req.body.description;
+  const time  = req.body.time;
+  const url =  req.body.url;
+  Recipe.findById(id)
+  .then(recipe => {
+    recipe[0].names = name;
+    recipe[0].description = description;
+    recipe[0].time = time;
+    recipe[0].url = url;
+    return recipe.save();
+  })
+  .then(result => {
+    console.log('UPDATED PRODUCT!');
+    res.redirect('/recipes');
+  })
+  .catch(err => console.log(err));
 }
 
 exports.postDeleteRecipe =  (req,res, next) => {

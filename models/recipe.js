@@ -25,7 +25,7 @@ module.exports = class Recipe {
   }
 
   static deleteById(id){
-    return db.execute("DELETE FROM recipes WHERE id = ?" [id]);
+    return db.execute("DELETE FROM recipes WHERE id = ?", [id]);
   }
 
   update(id, names, description, time, image){

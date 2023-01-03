@@ -10,8 +10,8 @@
     <p> <%= recipe[0].price %> </p>
   </div>
 </div>
-<button class="btn btn-danger" >
-  <a href="/delete-recipe/<%=recipe[0].id%>" class="text-white text-decoration-none"> Delete recipe </a>
+<form method="post" action="/delete-recipe">
   <input type="hidden" name="id" value="<%=recipe[0].id%>">
-</button>
+  <button class="btn btn-danger" type="submit">Delete recipe</button>
+</form>
 <%- include("includes/end.ejs") %>
