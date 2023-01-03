@@ -9,7 +9,7 @@ const cookbookController = require("./controller/cookbooks");
 const productController = require("./controller/recipes");
 
 const errorController = require("./controller/error");
-const db = require("./util/database");
+const sequelize = require("./util/database");
 
 const ejs = require('ejs');
 
@@ -26,5 +26,14 @@ app.use(cookbookRoutes);
 
 app.use(cookbookController.getHome);
 app.use(errorController.get404);
+
+sequelize
+  .sync()
+  .then(results => {
+    console.log(results);
+  })
+  .catch(err => {
+    console.log(err);
+  })
 
 app.listen(3000)

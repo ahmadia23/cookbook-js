@@ -1,37 +1,29 @@
-const db = require("../util/database");
+const Sequelize = require("sequelize")
 
-module.exports = class Recipe {
-  constructor(id, name, description, time, image){
-    this.id = id;
-    this.names = name;
-    this.description = description;
-    this.time =  time;
-    this.image = image
+
+const sequelize = require('../util/database');
+
+const Recipe = sequelize.define('recipe', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  name: Sequelize.STRING,
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
+  time: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+});
 
-  save(){
-    return db.execute("INSERT INTO recipes (names, description, time, image) VALUES (?, ?, ?, ?)",
-    [this.names , this.description, this.time, this.image]
-    );
-  }
 
-  static fetchAll(){
-    return db.execute("SELECT * FROM recipes");
-
-  }
-
-  static findById(id){
-    return db.execute("SELECT * FROM recipes WHERE recipes.id = ?", [id]);
-  }
-
-  static deleteById(id){
-    return db.execute("DELETE FROM recipes WHERE id = ?", [id]);
-  }
-
-  static update(names, description, time, image, id){
-    return   db.execute(
-      "UPDATE recipes SET names = ?, description = ?, time = ?, image = ? WHERE id = ?",
-      [names, description, time, image, id]
-    )
-  }
-}
+module.exports = Recipe;
