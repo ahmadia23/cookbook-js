@@ -28,8 +28,10 @@ module.exports = class Recipe {
     return db.execute("DELETE FROM recipes WHERE id = ?", [id]);
   }
 
-  update(id, names, description, time, image){
-    return db.execute(`UPDATE recipes SET names =${names}, description = ${description}, time = ${time} image = ${image} WHERE id = ${id};`)
-
+  static update(names, description, time, image, id){
+    return   db.execute(
+      "UPDATE recipes SET names = ?, description = ?, time = ?, image = ? WHERE id = ?",
+      [names, description, time, image, id]
+    )
   }
 }
