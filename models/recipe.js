@@ -18,11 +18,11 @@ const Recipe = sequelize.define('recipe', {
   description: {
     type: Sequelize.STRING,
     allowNull: false
-  }
+  },
   time: {
     type: Sequelize.INTEGER,
     allowNull: false
-  },
+  }
 });
 
 

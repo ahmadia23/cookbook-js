@@ -41,20 +41,6 @@ exports.postAddRecipe =  (req,res, next) => {
     const description = req.body.description;
     const time = req.body.time;
     const image =  req.body.url;
-    const recipe = new Recipe(
-        null,
-        name,
-        description,
-        time,
-        image
-      );
-    recipe.save()
-    .then(() => {
-      res.redirect("/recipes");
-    })
-    .catch(err => {
-      console.log(err)
-    });
 }
 
 exports.getEditRecipe =  (req,res, next) => {
