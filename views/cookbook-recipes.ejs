@@ -3,8 +3,9 @@
 </head>
 
 <%- include("includes/navigation.ejs") %>
-<h1 class="text-center">Welcome to the <%=cookbook.name%> view all the recipes </h1>
+<h1 class="text-center">Welcome to the <%=cookbook.name%></h1>
 <div class="container">
+  <h2>view all the recipes</h2>
   <div class="recipes">
     <% if (recipes.length > 0) { %>
       <% for(let recipe of recipes){ %>
@@ -18,7 +19,7 @@
               <a href="/recipes/<%=recipe.id%>" class="text-white text-decoration-none"> See the full recipe </a>
             </button>
             <button class="btn btn-danger">
-              <a href="/edit-recipe/<%=recipe.id%>?edit=true" class="text-white text-decoration-none"> Edit this recipe</a>
+              <a href="/cookbooks/<%=cookbook.id%>/edit-recipe/<%=recipe.id%>?edit=true" class="text-white text-decoration-none"> Edit this recipe</a>
               <input type="hidden" name="id" value="<%=recipe.id%>">
             </button>
 
@@ -26,12 +27,15 @@
         </div>
         <% }%>
         <% } else { %>
-        <h1>No Recipes Found!</h1>
+        <button class="btn btn-primary">
+          <a href="/cookbooks/<%=cookbook.id%>/add-recipe" class="text-white text-decoration-none"> Add your first recipe </a>
+        </button>
     <%} %>
   </div>
 
   <button class="btn btn-primary">
-    <a href="/add-recipe" class="text-white text-decoration-none"> Add a recipe </a>
+    <a href="/cookbooks/<%=cookbook.id%>/add-recipe" class="text-white text-decoration-none"> Add a recipe </a>
+    <input type="hidden" name="id" value="<%=cookbook.id%>">
   </button>
 </div>
 <%- include("includes/end.ejs") %>

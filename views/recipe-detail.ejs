@@ -16,4 +16,8 @@
   <input type="hidden" name="id" value="<%=recipe.id%>">
   <button class="btn btn-danger" type="submit">Delete recipe</button>
 </form>
+<form method="post" action="/cookbooks/recipes">
+  <input type="hidden" name="id" value="<%=recipe.id%>">
+  <button class="btn btn-danger" type="submit">Add to my to cook list </button>
+</form>
 <%- include("includes/end.ejs") %>

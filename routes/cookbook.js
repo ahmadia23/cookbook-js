@@ -5,23 +5,26 @@ const recipesController = require("../controller/recipes");
 const cookbookController = require("../controller/cookbooks");
 
 
+router.get("/saved-recipes", recipesController.getSavingRecipes);
+router.post("/cookbooks/recipes", adminController.postSaving);
+router.get("/my-recipes", recipesController.getMyRecipes);
+
+router.get("/cookbooks/:cookbookId/recipes", cookbookController.getCookbookRecipes);
+router.get("/cookbooks/:cookbookId/", cookbookController.getCookbook);
 
 
-router.get("/cookbooks/:cookbookId/recipes", recipesController.getRecipes);
-
-
-router.get("/cookbooks/:cookbookId/recipes/:id", recipesController.getRecipe);
+router.get("/recipes/:id", recipesController.getRecipe);
 
 router.get("/cookbooks", cookbookController.getCookbooks);
 
-router.get("/cookbooks/:cookbookId/recipes/add-recipe", adminController.getAddRecipe);
-router.post("/cookbooks/:cookbookId/recipes/add-recipe", adminController.postAddRecipe);
+router.get("/cookbooks/:cookbookId/add-recipe", adminController.getAddRecipe);
+router.post("/cookbooks/:cookbookId/add-recipe", adminController.postAddRecipe);
 
 router.get("/new-cookbook", adminController.getAddCookbook);
 router.post("/new-cookbook", adminController.postAddCookbook);
 
-router.get("/edit-recipe/:id",adminController.getEditRecipe);
-router.post("/edit-recipe", adminController.postEditRecipe);
+router.get("/cookbooks/:cookbookId/edit-recipe/:id",adminController.getEditRecipe);
+router.post("/cookbooks/:cookbookId/edit-recipe/:id", adminController.postEditRecipe);
 
 router.post("/delete-recipe", adminController.postDeleteRecipe);
 router.post("/delete-cookbook", adminController.postDeleteCookbook);

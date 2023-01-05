@@ -14,11 +14,13 @@ const sequelize = require("./util/database");
 const Recipe = require("./models/recipe");
 const Cookbook = require("./models/cookbook");
 const User = require("./models/user");
+const Saving = require("./models/saving");
 
 
 const ejs = require('ejs');
 
 const cookbookRoutes = require("./routes/cookbook.js");
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")))
@@ -29,7 +31,6 @@ app.set("views", "views");
 app.use((req, res, next) => {
   User.findByPk(1)
   .then((user) => {
-    console.log(user);
     req.user = user;
     next();
   })
@@ -43,10 +44,14 @@ app.use(cookbookController.getHome);
 app.use(errorController.get404);
 
 Recipe.belongsTo(Cookbook, {constraints: true, onDelete: 'CASCADE'});
+User.hasOne(Cookbook);
 Cookbook.hasMany(Recipe);
 
 Cookbook.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
-User.hasMany(Cookbook);
+User.hasOne(Saving);
+Recipe.belongsToMany(Saving, {through: User});
+Saving.belongsToMany(Recipe, {through: User});
+
 
 sequelize
   .sync()
@@ -60,6 +65,9 @@ sequelize
     return user;
   })
   .then(user => {
+    return user.createSaving({quantity: 0});
+  })
+  .then(saving => {
     app.listen(3000);
   })
   .catch(err => {

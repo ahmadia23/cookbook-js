@@ -3,28 +3,42 @@ const Cookbook = require("../models/cookbook");
 
 
 exports.getAddRecipe =  (req,res, next) => {
-  res.render("add-recipe", {
-    pageTitle: "Add Recipe",
-    editing: false,
-  });
+  const id = req.params.cookbookId
+  Cookbook.findByPk(id)
+    .then((cookbook) => {
+      res.render("add-recipe", {
+        pageTitle: "Add Recipe",
+        editing: false,
+        cookbook: cookbook
+      });
+    })
+    .catch(err => console.log(err))
 }
 
 exports.postAddRecipe =  (req,res, next) => {
-  const name = req.body.recipe;
+  const name = req.body.name;
   const description = req.body.description;
   const time = req.body.time;
   const image =  req.body.url;
-  req.user.createRecipe({
-    name: name,
-    description: description,
-    time: time,
-    imageUrl: image,
+  const id = req.params.cookbookId;
+  Cookbook.findByPk(id)
+  .then((cookbook) => {
+    console.log(name);
+    cookbook.createRecipe({
+      name: name,
+      description: description,
+      time: time,
+      imageUrl: image,
+    })
+    .then(results => {
+      console.log("created recipe")
+      res.redirect(`/cookbooks/${id}/recipes`)
+    })
+    .catch(err => {
+      console.log(err)
+    });
   })
-  .then(results => {
-    console.log("created recipes")
-  }).catch(err => {
-    console.log(err)
-  });
+  .catch(err => {console.log(err)});
 }
 
 
@@ -34,37 +48,46 @@ exports.getEditRecipe =  (req,res, next) => {
   if (!editMode) {
     return res.redirect('/');
   }
+  const cookbookId = req.params.cookbookId;
   const id = req.params.id;
-  Recipe.findByPk(id)
-    .then((recipe) => {
-      res.render('add-recipe', {
-        pageTitle: 'Edit Product',
-        editing: editMode,
-        path: '/edit-product',
-        recipe: recipe
-      });
+  Cookbook.findByPk(cookbookId)
+    .then((cookbook) => {
+      Recipe.findByPk(id)
+        .then((recipe) => {
+          res.render('add-recipe', {
+            pageTitle: 'Edit Product',
+            editing: editMode,
+            path: '/edit-product',
+            recipe: recipe,
+            cookbook: cookbook
+          });
+        })
+        .catch(err => console.log(err))
     })
     .catch(err => console.log(err));
 }
 
 
 exports.postEditRecipe =  (req,res, next) => {
+  console.log("hellooooooooooo theeeere")
   const id = req.body.id;
-  const name = req.body.recipe;
+  const cookbookId = req.params.cookbookId;
+  const name = req.body.name;
   const description = req.body.description;
   const time  = req.body.time;
   const url =  req.body.url;
   Recipe.findByPk(id)
     .then(recipe => {
-      recipe.name = name;
-      recipe.description = description;
-      recipe.time = time;
-      recipe.url = url;
-      return recipe.save();
+      recipe.update({
+        name: name,
+        description: description,
+        time: time,
+        url: url
+      })
     })
     .then(results => {
       console.log('UPDATED Recipe!');
-      res.redirect('/recipes');
+      res.redirect(`/cookbooks/${cookbookId}/recipes`);
     })
     .catch(err => console.log(err));
   };
@@ -114,4 +137,36 @@ exports.postDeleteCookbook =  (req,res, next) => {
       res.redirect("/cookbooks");
     })
     .catch((err)=> {console.log(err)});
+}
+
+exports.postSaving =  (req,res, next) => {
+  const recipeId = req.body.id;
+  let fetchedSaving;
+  req.user.getSaving()
+    .then((saving) => {
+      fetchedSaving = saving;
+      return saving.getRecipes({where: {id: recipeId}});
+    })
+    .then(recipes => {
+      let recipe;
+      if (recipes.length > 0){
+        recipe = recipes[0];
+      }
+      if (recipe) {
+        alert("already added");
+        res.redirect("/saved-recipes");
+      }
+      return Recipe.findByPk(recipeId)
+        .then((recipe) => {
+          return fetchedSaving.addRecipe(recipe, {through: {
+            password: req.user.password,
+            email: req.user.email
+          }});
+        })
+        .catch(err => console.log(err));
+    })
+    .then(() => {
+      res.redirect('/saved-recipes')
+    })
+    .catch(err => console.log(err));
 }
