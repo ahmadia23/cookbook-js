@@ -18,6 +18,10 @@ const Cookbook = sequelize.define('cookbook', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  description: {
+    type: Sequelize.TEXT('long'),
+    allowNull: false
+  },
 });
 
 

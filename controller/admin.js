@@ -90,10 +90,12 @@ exports.postAddCookbook =  (req,res, next) => {
   const name = req.body.name;
   const theme = req.body.theme;
   const image = req.body.image;
+  const description = req.body.description
   req.user.createCookbook({
     name: name,
     theme: theme,
     imageUrl: image,
+    description: description
   })
   .then(results => {
     console.log("created Cookbook");
