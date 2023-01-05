@@ -1,17 +1,19 @@
 <%- include("includes/head.ejs") %>
+<title><%= recipe.name%></title>
 </head>
 <%- include("includes/navigation.ejs") %>
 <h1 class="text-center">coucou show</h1>
 <div class="container">
   <div class="card p-3">
-    <h3 class="text-center my-4" > <%=recipe[0].names%></h3>
-    <p><%= recipe[0].description %>   </p>
-    <p>Preparation time: <%= recipe[0].time%> Minutes</p>
-    <p> <%= recipe[0].price %> </p>
+    <h3 class="text-center my-4" > <%=recipe.name%></h3>
+    <img src="<%= recipe.imageUrl%>" alt="recipe picture">
+    <p><%= recipe.description %>   </p>
+    <p>Preparation time: <%= recipe.time%> Minutes</p>
+    <p> <%= recipe.price %> </p>
   </div>
 </div>
 <form method="post" action="/delete-recipe">
-  <input type="hidden" name="id" value="<%=recipe[0].id%>">
+  <input type="hidden" name="id" value="<%=recipe.id%>">
   <button class="btn btn-danger" type="submit">Delete recipe</button>
 </form>
 <%- include("includes/end.ejs") %>

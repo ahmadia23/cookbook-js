@@ -1,15 +1,20 @@
 const express = require("express");
-const { ppid } = require("process");
+
 const path = require("path");
 const app = express();
 const bodyParser = require('body-parser');
 
 
 const cookbookController = require("./controller/cookbooks");
-const productController = require("./controller/recipes");
+const recipesController = require("./controller/recipes");
+const adminController = require("./controller/recipes");
 
 const errorController = require("./controller/error");
 const sequelize = require("./util/database");
+const Recipe = require("./models/recipe");
+const Cookbook = require("./models/cookbook");
+const User = require("./models/user");
+
 
 const ejs = require('ejs');
 
@@ -21,19 +26,42 @@ app.use(express.static(path.join(__dirname, "public")))
 app.set('view engine', 'ejs');
 app.set("views", "views");
 
+app.use((req, res, next) => {
+  User.findByPk(1)
+  .then((user) => {
+    console.log(user);
+    req.user = user;
+    next();
+  })
+  .catch(err => {
+    console.log(err)
+  });
+});
 app.use(cookbookRoutes);
-
 
 app.use(cookbookController.getHome);
 app.use(errorController.get404);
 
+Recipe.belongsTo(Cookbook, {constraints: true, onDelete: 'CASCADE'});
+Cookbook.hasMany(Recipe);
+
+Cookbook.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
+User.hasMany(Cookbook);
+
 sequelize
   .sync()
   .then(results => {
-    console.log(results);
+    User.findByPk(1);
+  })
+  .then(user => {
+    if (!user){
+      return User.create({email: 'test@test.com', password: 'Adou23', });
+    }
+    return user;
+  })
+  .then(user => {
+    app.listen(3000);
   })
   .catch(err => {
     console.log(err);
   })
-
-app.listen(3000)

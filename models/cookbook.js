@@ -14,7 +14,7 @@ const Cookbook = sequelize.define('cookbook', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  description: {
+  theme: {
     type: Sequelize.STRING,
     allowNull: false
   },

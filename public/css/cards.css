@@ -1,6 +1,6 @@
 .card-product {
   overflow: hidden;
-  background: white;
+  background: grey;
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
   align-items: center;
   max-width: 40%;
@@ -9,11 +9,22 @@
 }
 
 .card-product img {
-  max-height: 20em;
+  max-height: 15em;
   margin: 1em 0;
   image-rendering: auto;
   width: 100%;
   object-fit: center;
+}
+.card img {
+  max-height: 30em!important;
+  margin: 1em 0;
+  image-rendering: auto;
+  width: 100%;
+  object-fit: center;
+}
+
+.card {
+  max-width: 80%;
 }
 
 .card-product h2 {
