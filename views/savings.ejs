@@ -17,10 +17,10 @@
             <button class="btn btn-primary">
               <a href="/recipes/<%=recipe.id%>" class="text-white text-decoration-none"> See the full recipe </a>
             </button>
-            <button class="btn btn-danger">
-              <a href="/edit-recipe/<%=recipe.id%>?edit=true" class="text-white text-decoration-none"> Edit this recipe</a>
+            <form method="POST" action="/delete-save">
               <input type="hidden" name="id" value="<%=recipe.id%>">
-            </button>
+              <button class="btn btn-danger" type="submit">Remove</button>
+            </form>
           </div>
         </div>
         <% }%>

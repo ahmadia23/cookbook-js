@@ -30,7 +30,6 @@ exports.getRecipes = (req, res, next) => {
 
 
 exports.getSavingRecipes = (req, res, next) => {
-  const id = req.params.cookbookId;
   req.user.getSaving()
     .then((saving) => {
       return saving

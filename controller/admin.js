@@ -130,7 +130,6 @@ exports.postAddCookbook =  (req,res, next) => {
 
 exports.postDeleteCookbook =  (req,res, next) => {
   const id = req.body.id;
-  console.log("hello teeest");
   Cookbook.findByPk(id)
     .then((cookbook)=> {
       cookbook.destroy();
@@ -169,4 +168,27 @@ exports.postSaving =  (req,res, next) => {
       res.redirect('/saved-recipes')
     })
     .catch(err => console.log(err));
+}
+
+exports.postSavingDeleteRecipe =  (req,res, next) => {
+  const recipeId = req.body.id;
+  console.log("hellooooooo");
+  let fetchedsaving;
+  req.user
+    .getSaving()
+    .then(saving => {
+      fetchedsaving = saving;
+      return saving.getRecipes({where: {id: recipeId}});
+    })
+    .then((recipes) => {
+      console.log(recipes);
+      const recipe = recipes[0];
+      return fetchedsaving.recipe.destroy();
+    })
+    .then((results) => {
+      res.redirect("/saved-recipes");
+    })
+    .catch(err => {
+      console.log(err);
+    })
 }

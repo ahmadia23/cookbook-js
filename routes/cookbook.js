@@ -26,6 +26,7 @@ router.post("/new-cookbook", adminController.postAddCookbook);
 router.get("/cookbooks/:cookbookId/edit-recipe/:id",adminController.getEditRecipe);
 router.post("/cookbooks/:cookbookId/edit-recipe/:id", adminController.postEditRecipe);
 
+router.post("/delete-save", adminController.postSavingDeleteRecipe);
 router.post("/delete-recipe", adminController.postDeleteRecipe);
 router.post("/delete-cookbook", adminController.postDeleteCookbook);
 

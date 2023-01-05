@@ -49,8 +49,8 @@ Cookbook.hasMany(Recipe);
 
 Cookbook.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
 User.hasOne(Saving);
-Recipe.belongsToMany(Saving, {through: User});
-Saving.belongsToMany(Recipe, {through: User});
+Saving.hasMany(Recipe);
+Recipe.belongsTo(User, {through: Saving})
 
 
 sequelize
