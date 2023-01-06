@@ -2,6 +2,18 @@ const Recipe = require("../models/recipe");
 const Cookbook = require("../models/cookbook");
 
 
+exports.getLogin =  (req,res, next) => {
+  res.render("login", {
+    pageTitle: "Login Page"
+  });
+}
+
+exports.postLogin =  (req,res, next) => {
+  res.render("login", {
+    pageTitle: "Login Page"
+  });
+}
+
 exports.getAddRecipe =  (req,res, next) => {
   const id = req.params.cookbookId
   Cookbook.findByPk(id)
@@ -181,9 +193,8 @@ exports.postSavingDeleteRecipe =  (req,res, next) => {
       return saving.getRecipes({where: {id: recipeId}});
     })
     .then((recipes) => {
-      console.log(recipes);
       const recipe = recipes[0];
-      return fetchedsaving.recipe.destroy();
+      return recipe.savingItem.destroy();
     })
     .then((results) => {
       res.redirect("/saved-recipes");

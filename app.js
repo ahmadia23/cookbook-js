@@ -15,6 +15,7 @@ const Recipe = require("./models/recipe");
 const Cookbook = require("./models/cookbook");
 const User = require("./models/user");
 const Saving = require("./models/saving");
+const SavingItem = require("./models/saving-item");
 
 
 const ejs = require('ejs');
@@ -49,8 +50,8 @@ Cookbook.hasMany(Recipe);
 
 Cookbook.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
 User.hasOne(Saving);
-Saving.hasMany(Recipe);
-Recipe.belongsTo(User, {through: Saving})
+Saving.belongsToMany(Recipe, {through: SavingItem});
+Recipe.belongsToMany(Saving, {through: SavingItem});
 
 
 sequelize

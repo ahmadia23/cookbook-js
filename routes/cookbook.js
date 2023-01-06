@@ -14,6 +14,7 @@ router.get("/cookbooks/:cookbookId/", cookbookController.getCookbook);
 
 
 router.get("/recipes/:id", recipesController.getRecipe);
+router.get("/login", adminController.getLogin);
 
 router.get("/cookbooks", cookbookController.getCookbooks);
 
