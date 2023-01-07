@@ -3,15 +3,17 @@ const Cookbook = require("../models/cookbook");
 
 
 exports.getLogin =  (req,res, next) => {
+  console.log("geeeet")
   res.render("login", {
     pageTitle: "Login Page"
   });
 }
 
 exports.postLogin =  (req,res, next) => {
-  res.render("login", {
-    pageTitle: "Login Page"
-  });
+  console.log("poooost")
+  req.session.isLoggedIn = true;
+  console.log(req.session);
+  res.redirect("/login");
 }
 
 exports.getAddRecipe =  (req,res, next) => {

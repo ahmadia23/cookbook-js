@@ -3,14 +3,19 @@ const express = require("express");
 const path = require("path");
 const app = express();
 const bodyParser = require('body-parser');
+const session = require("express-session")
+const sequelize = require("./util/database");
+const SequelizeStore = require("connect-session-sequelize")(
+ session.Store
+);
 
 
 const cookbookController = require("./controller/cookbooks");
 const recipesController = require("./controller/recipes");
 const adminController = require("./controller/recipes");
-
 const errorController = require("./controller/error");
-const sequelize = require("./util/database");
+
+
 const Recipe = require("./models/recipe");
 const Cookbook = require("./models/cookbook");
 const User = require("./models/user");
@@ -24,7 +29,21 @@ const cookbookRoutes = require("./routes/cookbook.js");
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "public")))
+app.use(express.static(path.join(__dirname, "public")));
+
+
+app.use(
+  session({
+    secret: 'my secret',
+    store: new SequelizeStore({
+      db: sequelize,
+    }),
+    resave: false,
+    saveUninitialized: false
+  })
+  );
+
+
 
 app.set('view engine', 'ejs');
 app.set("views", "views");
