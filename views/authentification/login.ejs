@@ -3,6 +3,9 @@
 </head>
 <%- include("../includes/navigation.ejs") %>
 <div class="container">
+  <% if (errorMessage) {%>
+  <div class="user-message user-message--error"><%= errorMessage %></div>
+  <% } %>
   <form class="col-6 offset-3 my-5">
     <div class="form-group row">
       <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
@@ -21,6 +24,9 @@
         <form method="post" action="/login">
           <button formmethod="post" formaction="/login" type="submit" class="btn btn-primary">Sign in</button>
         </form>
+        <div>
+          <a href="/reset-account"> Reset Password</a>
+        </div>
       </div>
     </div>
   </form>

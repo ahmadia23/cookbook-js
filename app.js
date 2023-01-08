@@ -8,6 +8,7 @@ const sequelize = require("./util/database");
 const SequelizeStore = require("connect-session-sequelize")(
  session.Store
 );
+const flash = require("connect-flash");
 
 
 const cookbookController = require("./controller/cookbooks");
@@ -44,7 +45,7 @@ app.use(
   })
   );
 
-
+app.use(flash());
 
 app.set('view engine', 'ejs');
 app.set("views", "views");
@@ -77,7 +78,7 @@ Recipe.belongsToMany(Saving, {through: SavingItem});
 
 
 sequelize
-  .sync()
+  .sync({ force: true})
   .then(saving => {
     app.listen(3000);
   })
