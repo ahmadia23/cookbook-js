@@ -3,12 +3,14 @@ const Cookbook = require("../models/cookbook");
 
 
 exports.getRecipe = (req,res, next) => {
+  const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.id
     Recipe.findByPk(id)
     .then((recipe) => {
       res.render("recipe-detail", {
         pageTitle: recipe.name,
-        recipe: recipe
+        recipe: recipe,
+        isAuthenticated: isLoggedIn
       });
     })
     .catch(err => {
@@ -17,12 +19,14 @@ exports.getRecipe = (req,res, next) => {
 }
 
 exports.getRecipes = (req, res, next) => {
+  const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId;
   Recipe.findAll()
     .then((recipes) => {
       res.render("index", {
         pageTitle: "cookbook",
-        recipes: recipes
+        recipes: recipes,
+        isAuthenticated: isLoggedIn
       });
     })
     .catch(err => console.log(err));
@@ -30,6 +34,7 @@ exports.getRecipes = (req, res, next) => {
 
 
 exports.getSavingRecipes = (req, res, next) => {
+  const isLoggedIn = req.session.isLoggedIn;
   req.user.getSaving()
     .then((saving) => {
       return saving
@@ -38,7 +43,8 @@ exports.getSavingRecipes = (req, res, next) => {
         console.log(recipes)
         res.render("savings", {
           pageTitle: "My recipes to make",
-          recipes: recipes
+          recipes: recipes,
+          isAuthenticated: isLoggedIn
         });
       })
       .catch(err => {console.log(err)});
@@ -47,12 +53,14 @@ exports.getSavingRecipes = (req, res, next) => {
 }
 
 exports.getMyRecipes = (req, res, next) => {
+  const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId;
   Recipe.findAll()
     .then((recipes) => {
       res.render("user-recipes", {
         pageTitle: "My recipes to make",
-        recipes: recipes
+        recipes: recipes,
+        isAuthenticated: isLoggedIn
       });
     })
     .catch(err => console.log(err));

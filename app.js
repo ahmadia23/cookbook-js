@@ -25,6 +25,7 @@ const SavingItem = require("./models/saving-item");
 
 const ejs = require('ejs');
 
+const authRoutes = require("./routes/auth.js");
 const cookbookRoutes = require("./routes/cookbook.js");
 
 
@@ -58,7 +59,9 @@ app.use((req, res, next) => {
     console.log(err)
   });
 });
+
 app.use(cookbookRoutes);
+app.use(authRoutes);
 
 app.use(cookbookController.getHome);
 app.use(errorController.get404);
@@ -75,18 +78,6 @@ Recipe.belongsToMany(Saving, {through: SavingItem});
 
 sequelize
   .sync()
-  .then(results => {
-    User.findByPk(1);
-  })
-  .then(user => {
-    if (!user){
-      return User.create({email: 'test@test.com', password: 'Adou23', });
-    }
-    return user;
-  })
-  .then(user => {
-    return user.createSaving({quantity: 0});
-  })
   .then(saving => {
     app.listen(3000);
   })

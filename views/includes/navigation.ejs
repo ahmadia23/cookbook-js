@@ -15,15 +15,31 @@
           <li class="nav-item active">
             <a class="nav-link" href="/cookbooks">All Cookbooks</a>
           </li>
+          <%  if(isAuthenticated) {%>
           <li class="nav-item active">
             <a class="nav-link" href="/my-recipes">Manage Recipes</a>
           </li>
+          <% } %>
+          <%  if(isAuthenticated) {%>
           <li class="nav-item">
             <a class="nav-link" href="/saved-recipes">To cook </a>
           </li>
+          <% } %>
+          <%  if(!isAuthenticated) {%>
           <li class="nav-item">
             <a class="nav-link" href="/login">Login</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/sign-up">Sign up</a>
+          </li>
+          <% } %>
+          <%  if(isAuthenticated) {%>
+          <li class="nav-item">
+            <form method="post" action="/logout">
+              <button class="nav-link"  type="submit">Log out</button>
+            </form>
+          </li>
+          <% } %>
             <li class="nav-item dropdown">
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="#">Action</a>

@@ -2,28 +2,19 @@ const Recipe = require("../models/recipe");
 const Cookbook = require("../models/cookbook");
 
 
-exports.getLogin =  (req,res, next) => {
-  console.log("geeeet")
-  res.render("login", {
-    pageTitle: "Login Page"
-  });
-}
-
-exports.postLogin =  (req,res, next) => {
-  console.log("poooost")
-  req.session.isLoggedIn = true;
-  console.log(req.session);
-  res.redirect("/login");
-}
-
 exports.getAddRecipe =  (req,res, next) => {
+  const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId
+  if (!isLoggedIn){
+    res.redirect("/login")
+  }
   Cookbook.findByPk(id)
     .then((cookbook) => {
       res.render("add-recipe", {
         pageTitle: "Add Recipe",
         editing: false,
-        cookbook: cookbook
+        cookbook: cookbook,
+        isAuthenticated: isLoggedIn
       });
     })
     .catch(err => console.log(err))
@@ -57,6 +48,7 @@ exports.postAddRecipe =  (req,res, next) => {
 
 
 exports.getEditRecipe =  (req,res, next) => {
+  const isLoggedIn = req.session.isLoggedIn;
   const editMode = req.query.edit;
    console.log(editMode)
   if (!editMode) {
@@ -73,7 +65,8 @@ exports.getEditRecipe =  (req,res, next) => {
             editing: editMode,
             path: '/edit-product',
             recipe: recipe,
-            cookbook: cookbook
+            cookbook: cookbook,
+            isAuthenticated: isLoggedIn
           });
         })
         .catch(err => console.log(err))
@@ -118,8 +111,10 @@ exports.postDeleteRecipe =  (req,res, next) => {
 
 
 exports.getAddCookbook = (req,res, next) => {
+  const isLoggedIn = req.session.isLoggedIn;
   res.render("../views/new-cookbook", {
     pageTitle: "new cookbook",
+    isAuthenticated: isLoggedIn
   });
 }
 
