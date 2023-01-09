@@ -51,7 +51,10 @@ app.set('view engine', 'ejs');
 app.set("views", "views");
 
 app.use((req, res, next) => {
-  User.findByPk(1)
+  if (!req.session.user[0]){
+    return next();
+  }
+  User.findByPk(req.session.user[0].id)
   .then((user) => {
     req.user = user;
     next();
@@ -78,7 +81,7 @@ Recipe.belongsToMany(Saving, {through: SavingItem});
 
 
 sequelize
-  .sync({ force: true})
+  .sync()
   .then(saving => {
     app.listen(3000);
   })
