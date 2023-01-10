@@ -51,7 +51,7 @@ app.set('view engine', 'ejs');
 app.set("views", "views");
 
 app.use((req, res, next) => {
-  if (!req.session.user[0]){
+  if (!req.session.user){
     return next();
   }
   User.findByPk(req.session.user[0].id)

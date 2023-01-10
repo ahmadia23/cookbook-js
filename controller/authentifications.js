@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
+const { validationResult} = require('express-validator/check');
 
 const User = require("../models/user");
 
@@ -23,7 +24,12 @@ exports.getLogin =  (req,res, next) => {
   res.render("../views/authentification/login", {
     pageTitle: "Login Page",
     errorMessage: message,
-    isAuthenticated: isLoggedIn
+    isAuthenticated: isLoggedIn,
+    oldInput: {
+      email: '',
+      password: ''
+    },
+    validationErrors: []
   });
 }
 exports.getReset =  (req,res, next) => {
@@ -87,19 +93,37 @@ exports.getSignup =  (req,res, next) => {
   res.render("../views/authentification/signup", {
     pageTitle: "Login Page",
     errorMessage: message,
-    isAuthenticated: isLoggedIn
+    isAuthenticated: isLoggedIn,
+    oldInput: {email: '', password: '', confirmedPassword: ''},
+    validationErrors: []
   });
 }
 
 exports.postLogin =  (req,res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+  const isLoggedIn = req.session.isLoggedIn
+
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(422).render("../views/authentification/login", {
+      pageTitle: "Login Page",
+      errorMessage: errors.array()[0].msg,
+      isAuthenticated: isLoggedIn,
+      oldInput: {email: email, password: password},
+      validationErrors: errors.array()
+    });
+  }
   User.findAll({where: {email: email}})
     .then(user => {
       if (!user[0]) {
-        console.log(user);
-        req.flash('error', 'Invalid email or password');
-        return res.redirect("/login");
+        return res.status(422).render("../views/authentification/login", {
+          pageTitle: "Login Page",
+          errorMessage: 'Invalid email or password',
+          isAuthenticated: isLoggedIn,
+          oldInput: {email: email, password: password},
+          validationErrors: errors.array()
+        });
       }
       bcrypt
         .compare(password, user[0].password)
@@ -112,12 +136,17 @@ exports.postLogin =  (req,res, next) => {
               res.redirect('/');
             });
           }
-          req.flash('error', 'Invalid email or password');
-          res.redirect("/login");
+          return res.status(422).render("../views/authentification/login", {
+            pageTitle: "Login Page",
+            errorMessage: 'Invalid email or password',
+            isAuthenticated: isLoggedIn,
+            oldInput: {email: email, password: password},
+            validationErrors: errors.array()
+          });
         })
         .catch(err => {
           console.log(err);
-          res.redirect("/login")
+          res.redirect("/login");
         })
     })
     .catch(err => console.log(err));
@@ -127,6 +156,17 @@ exports.postSignup =  (req,res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confirmedPassword = req.body.confirmedPassword;
+    const isLoggedIn = req.session.isLoggedIn;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()){
+    return res.status(422).render("../views/authentification/signup", {
+      pageTitle: "Login Page",
+      errorMessage: errors.array()[0].msg,
+      isAuthenticated: isLoggedIn,
+      oldInput: {email: email, password: password, confirmedPassword: confirmedPassword},
+      validationErrors: errors.array()
+    });
+  }
   User.findAll({where: {email: email}})
   .then(([userRec]) => {
     if (userRec){
@@ -222,5 +262,5 @@ exports.postNewPassword = (req, res, next) => {
     .then(results => {
       res.redirect("/login");
     })
-    .catch(err => console.log(err))
+    .catch(err => console.log(err));
 }

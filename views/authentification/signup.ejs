@@ -10,19 +10,34 @@
     <div class="form-group row">
       <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
       <div class="col-sm-10">
-        <input type="email" class="form-control" id="inputEmail3" placeholder="Email" name="email">
+        <input type="email"
+        class="form-control <%=validationErrors.find(e => e.param === 'email') ? 'border border-danger' : ""%>"
+        id="inputEmail3"
+        placeholder="Email"
+        name="email"
+        value="<%=oldInput.email%>">
       </div>
     </div>
     <div class="form-group row">
       <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
       <div class="col-sm-10">
-        <input type="password" class="form-control" id="inputPassword3" placeholder="Password" name="password">
+        <input type="password"
+              class="form-control  <%=validationErrors.find(e => e.param === 'password') ? 'border border-danger' : ""%>"
+              id="inputPassword3"
+              placeholder="Password"
+              name="password"
+              value="<%=oldInput.password%>">
       </div>
     </div>
     <div class="form-group row">
       <label for="inputPassword3" class="col-sm-2 col-form-label">Confirm Password</label>
       <div class="col-sm-10">
-        <input type="password" class="form-control" id="inputPassword3" placeholder="Password"  name="confirmedPassword">
+        <input type="password"
+              class="form-control <%=validationErrors.find(e => e.param === 'confirmedPassword') ? 'border border-danger' : ""%>"
+              id="inputPassword3"
+              placeholder="Password"
+              name="confirmedPassword"
+              value="<%=oldInput.confirmedPassword%>">
       </div>
     </div>
     <div class="form-group row">

@@ -2,6 +2,7 @@ const express = require("express");
 const adminController = require("../controller/admin");
 const recipesController = require("../controller/recipes");
 const cookbookController = require("../controller/cookbooks");
+const {body, check} = require("express-validator/check");
 const isAuth = require("../middleware/is-auth");
 
 const router = express.Router();
@@ -21,10 +22,26 @@ router.get("/recipes/:id", recipesController.getRecipe);
 router.get("/cookbooks", cookbookController.getCookbooks);
 
 router.get("/cookbooks/:cookbookId/add-recipe", isAuth, adminController.getAddRecipe);
-router.post("/cookbooks/:cookbookId/add-recipe", isAuth, adminController.postAddRecipe);
+router.post("/cookbooks/:cookbookId/add-recipe",
+  [ body('name')
+    .isLength({ min: 5 })
+    .isAlphanumeric()
+    .trim(),
+    body('description')
+    .isLength({ min: 5 })
+    .isAlphanumeric()
+    .trim(),
+    body('time')
+    .isIn([0, 60])
+    .isAlphanumeric()
+    .trim(),
+    body('url')
+    .isURL()
+  ]
+,isAuth, adminController.postAddRecipe);
 
-router.get("/new-cookbook", isAuth, adminController.getAddCookbook);
-router.post("/new-cookbook", isAuth, adminController.postAddCookbook);
+router.get("/new-cookbook",isAuth, adminController.getAddCookbook);
+router.post("/new-cookbook", check(),isAuth, adminController.postAddCookbook);
 
 router.get("/cookbooks/:cookbookId/edit-recipe/:id", isAuth, adminController.getEditRecipe);
 router.post("/cookbooks/:cookbookId/edit-recipe/:id", isAuth, adminController.postEditRecipe);

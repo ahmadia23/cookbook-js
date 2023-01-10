@@ -55,9 +55,13 @@ exports.getSavingRecipes = (req, res, next) => {
 exports.getMyRecipes = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId;
-  Recipe.findAll({where: { userId: req.user.id}})
-    .then(recipes => {
-      console.log(recipes);
+  Recipe.findAll({
+    include: [
+      {
+        model: Cookbook,
+        where: { userId: req.user.id }
+      },
+    ],
     })
     .then((recipes) => {
       res.render("user-recipes", {
