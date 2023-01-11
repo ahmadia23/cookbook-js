@@ -3,7 +3,7 @@
 
 <%- include("includes/navigation.ejs") %>
 <h1 class="text-center">coucou New cookbook </h1>
-<form action="/new-cookbook"  method ="POST" class="col-6 offset-3">
+<form action="/new-cookbook"  method ="POST" class="col-6 offset-3" enctype="multipart/form-data">
   <div class="form-group my-3">
     <label for="cookbookTitle">Choose a name </label>
     <input type="text" class="form-control" id="cookbookTitle" aria-describedby="emailHelp" placeholder="Enter name" name="name">
@@ -17,8 +17,8 @@
     <input type="text" class="form-control" id="description" aria-describedby="emailHelp" placeholder="Describe your cookbook" name="description" size="50">
   </div>
   <div class="form-group my-3">
-    <label for="url">Image Url</label>
-    <input type="text" class="form-control" id="url" placeholder="https://www..." name="image">
+    <label for="image">Image</label>
+    <input type="file" class="form-control" id="image" placeholder="https://www..." name="image">
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>

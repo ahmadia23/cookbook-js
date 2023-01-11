@@ -1,5 +1,5 @@
 <%- include("includes/head.ejs") %>
-<title>index</title>
+<title> Cookbook's recipes</title>
 </head>
 
 <%- include("includes/navigation.ejs") %>
@@ -11,7 +11,7 @@
       <% for(let recipe of recipes){ %>
         <div class="card-product">
           <h2 class="text-center"> <%=recipe.name%></h2>
-          <img src="<%= recipe.imageUrl%>" />
+          <img src="/<%= recipe.imageUrl%>" />
           <div class="card-product-infos">
             <p> <%= recipe.description%></p>
             <p>Preparation time:  <%= recipe.time%>Minutes</p>
@@ -33,9 +33,11 @@
     <%} %>
   </div>
 
+  <% if (goodUser) {%>
   <button class="btn btn-primary">
     <a href="/cookbooks/<%=cookbook.id%>/add-recipe" class="text-white text-decoration-none"> Add a recipe </a>
     <input type="hidden" name="id" value="<%=cookbook.id%>">
   </button>
+  <% } %>
 </div>
 <%- include("includes/end.ejs") %>

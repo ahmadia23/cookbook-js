@@ -1,5 +1,6 @@
 const Recipe = require("../models/recipe");
 const Cookbook = require("../models/cookbook");
+const fileHelper = require("../util/file");
 
 
 exports.getAddRecipe =  (req,res, next) => {
@@ -10,6 +11,9 @@ exports.getAddRecipe =  (req,res, next) => {
   }
   Cookbook.findByPk(id)
     .then((cookbook) => {
+      if (cookbook.userId !== req.user.id){
+        return res.redirect(`/cookbooks/${cookbook.id}/recipes`)
+      }
       res.render("add-recipe", {
         pageTitle: "Add Recipe",
         editing: false,
@@ -20,31 +24,53 @@ exports.getAddRecipe =  (req,res, next) => {
     .catch(err => console.log(err))
 }
 
-exports.postAddRecipe =  (req,res, next) => {
-  const name = req.body.name;
-  const description = req.body.description;
-  const time = req.body.time;
-  const image =  req.body.url;
-  const id = req.params.cookbookId;
-  Cookbook.findByPk(id)
-  .then((cookbook) => {
-    console.log(name);
-    cookbook.createRecipe({
-      name: name,
-      description: description,
-      time: time,
-      imageUrl: image,
-    })
-    .then(results => {
-      console.log("created recipe")
-      res.redirect(`/cookbooks/${id}/recipes`)
-    })
-    .catch(err => {
-      console.log(err)
-    });
-  })
-  .catch(err => {console.log(err)});
-}
+
+exports.postAddRecipe = (req, res, next) => {
+  const isLoggedIn = req.session.isLoggedIn
+    const name = req.body.name;
+    const description = req.body.description;
+    const time = req.body.time;
+    const image = req.file;
+    const id = req.params.cookbookId;
+    if (!image){
+      return res.status(422).render("../views/add-recipe", {
+        pageTitle: "new recipe",
+        isAuthenticated: isLoggedIn,
+        recipe: {
+          name: name,
+          theme: theme,
+          description: description
+        },
+        errorMessage: 'Attached file is not an image !.',
+        validationErrors: []
+      });
+    };
+
+    Cookbook.findByPk(id)
+      .then((cookbook) => {
+        // check if the current user is the creator of the cookbook
+        if (cookbook.userId === req.user.id) {
+          cookbook.createRecipe({
+            name: name,
+            description: description,
+            time: time,
+            imageUrl: image.path,
+          })
+            .then(results => {
+                console.log("created recipe")
+                res.redirect(`/cookbooks/${id}/recipes`)
+            })
+            .catch(err => {
+                console.log(err)
+            });
+        } else {
+            throw new Error("Unauthorized to create recipe");
+        }
+      })
+      .catch(err => {
+          console.log(err);
+      });
+};
 
 
 exports.getEditRecipe =  (req,res, next) => {
@@ -83,30 +109,53 @@ exports.postEditRecipe =  (req,res, next) => {
   const description = req.body.description;
   const time  = req.body.time;
   const url =  req.body.url;
+
   Recipe.findByPk(id)
     .then(recipe => {
-      recipe.update({
-        name: name,
-        description: description,
-        time: time,
-        url: url
-      })
-    })
-    .then(results => {
-      console.log('UPDATED Recipe!');
-      res.redirect(`/cookbooks/${cookbookId}/recipes`);
+      recipe.getCookbook()
+        .then(cookbook => {
+          if ( cookbook.userId !== req.user.id){
+            return res.redirect("/");
+          }
+          return recipe.update({
+            name: name,
+            description: description,
+            time: time,
+            url: url
+          })
+          .then(results => {
+            console.log('UPDATED Recipe!');
+            res.redirect(`/cookbooks/${cookbookId}/recipes`);
+           });
+        })
     })
     .catch(err => console.log(err));
   };
 
 exports.postDeleteRecipe =  (req,res, next) => {
   const id = req.body.id;
+  const cookbookId = req.params.cookbookId;
   Recipe.findByPk(id)
-    .then((recipe)=> {
-      recipe.destroy();
-      res.redirect("/recipes");
-    })
-    .catch((err)=> {console.log(err)});
+  .then(recipe => {
+      // retrieve the associated cookbook
+    recipe.getCookbook()
+      .then(cookbook => {
+        // check if the current user is the creator of the cookbook
+        if (cookbook.userId !== req.user.id) {
+          console.log(cookbook)
+            // destroy the recipe
+            return res.redirect(`/recipes/${recipe.id}`);
+          }
+          return recipe.destroy()
+          .then((results) => {
+            console.log("Recipe deleted");
+            res.redirect(`/cookbooks/${cookbookId}/recipes`)
+          });
+      });
+  })
+  .catch(err => {
+      console.log("Error deleting recipe: ", err.message);
+  });
 }
 
 
@@ -121,12 +170,27 @@ exports.getAddCookbook = (req,res, next) => {
 exports.postAddCookbook =  (req,res, next) => {
   const name = req.body.name;
   const theme = req.body.theme;
-  const image = req.body.image;
+  const image = req.file;
   const description = req.body.description
+  if (!image){
+    return res.status(422).render("../views/new-cookbook", {
+      pageTitle: "new cookbook",
+      isAuthenticated: isLoggedIn,
+      cookbook: {
+        name: name,
+        theme: theme,
+        description: description
+      },
+      errorMessage: 'Attached file is not an image !.',
+      validationErrors: []
+    });
+  }
+  const imageUrl = image.path;
+
   req.user.createCookbook({
     name: name,
     theme: theme,
-    imageUrl: image,
+    imageUrl: imageUrl,
     description: description
   })
   .then(results => {
@@ -140,7 +204,7 @@ exports.postAddCookbook =  (req,res, next) => {
 exports.postDeleteCookbook =  (req,res, next) => {
   const id = req.body.id;
   Cookbook.findByPk(id)
-    .then((cookbook)=> {
+  .then((cookbook)=> {
       cookbook.destroy();
       res.redirect("/cookbooks");
     })

@@ -4,9 +4,9 @@
 
 <%- include("includes/navigation.ejs") %>
 <h1 class="text-center"> <%if(editing){%>Coucou Edit Recipe<%}else {%>Coucou Add Recipe<%};%></h1>
-<form action="<%if (editing){%>/cookbooks/<%=cookbook.id%>/edit-recipe/<%=recipe.id%><%} else {%>/cookbooks/<%=cookbook.id%>/add-recipe<%}%>"  method ="POST" class="col-6 offset-3">
+<form action="<%if (editing){%>/cookbooks/<%=cookbook.id%>/edit-recipe/<%=recipe.id%><%} else {%>/cookbooks/<%=cookbook.id%>/add-recipe<%}%>"  method ="POST" class="col-6 offset-3" enctype="multipart/form-data">
   <div class="form-group my-3">
-    <label for="recipeTitle">Name of the recipe</label>
+    <label for="recipeTitle" enct>Name of the recipe</label>
     <input type="text" class="form-control" id="recipeTitle" aria-describedby="emailHelp" placeholder="Enter name" name="name"  value="<% if (editing) { %><%= recipe.name %><% } %>">
   </div>
   <div class="form-group my-3">
@@ -19,7 +19,7 @@
   </div>
   <div class="form-group my-3">
     <label for="imageRecipe">Image Url</label>
-    <input type="url" class="form-control" id="imageRecipe" name="url"  value="<% if (editing) { %><%= recipe.imageUrl %><% } %>">
+    <input type="file" class="form-control" id="imageRecipe" name="image">
   </div>
   <% if (editing) { %>
     <input type="hidden" value="<%= recipe.id %>" name="id">

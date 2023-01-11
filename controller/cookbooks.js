@@ -43,18 +43,33 @@ exports.getCookbookRecipes = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId;
   console.log("hello")
+
   Cookbook.findByPk(id)
     .then((cookbook) => {
-      Recipe.findAll({where: {cookbookId: id}})
+      //check if cookbook's recipes belongs to the user
+        Recipe.findAll({where: {cookbookId: id}})
         .then((recipes) => {
+          if (cookbook.userId === req.user.id)
+          {
+            return res.render("cookbook-recipes", {
+              pageTitle: cookbook.title,
+              cookbook: cookbook,
+              recipes: recipes,
+              isAuthenticated: isLoggedIn,
+              goodUser: true
+            });
+          }
           res.render("cookbook-recipes", {
             pageTitle: cookbook.title,
             cookbook: cookbook,
             recipes: recipes,
-            isAuthenticated: isLoggedIn
+            isAuthenticated: isLoggedIn,
+            goodUser: false
           });
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err);
+        })
     })
     .catch(err => console.log(err));
 }

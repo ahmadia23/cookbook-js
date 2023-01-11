@@ -2,7 +2,7 @@ const express = require("express");
 const adminController = require("../controller/admin");
 const recipesController = require("../controller/recipes");
 const cookbookController = require("../controller/cookbooks");
-const {body, check} = require("express-validator/check");
+const {body, check} = require("express-validator");
 const isAuth = require("../middleware/is-auth");
 
 const router = express.Router();
@@ -35,8 +35,6 @@ router.post("/cookbooks/:cookbookId/add-recipe",
     .isIn([0, 60])
     .isAlphanumeric()
     .trim(),
-    body('url')
-    .isURL()
   ]
 ,isAuth, adminController.postAddRecipe);
 
