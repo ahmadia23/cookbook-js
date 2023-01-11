@@ -4,7 +4,7 @@ const Recipe = require("../models/recipe");
 exports.getHome = (req,res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   console.log(req.session);
-  res.render("../views/home", {
+  res.json("../views/home", {
     pageTitle: "home",
     cookbooks: "ok",
     isAuthenticated: isLoggedIn

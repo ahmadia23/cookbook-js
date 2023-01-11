@@ -116,7 +116,7 @@ Recipe.belongsToMany(Saving, {through: SavingItem});
 sequelize
   .sync()
   .then(saving => {
-    app.listen(3000);
+    app.listen(8080);
   })
   .catch(err => {
     console.log(err);
