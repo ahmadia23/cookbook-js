@@ -25,5 +25,8 @@
     "nodemailer-sendgrid-transport": "^0.2.0",
     "nodemon": "^2.0.20",
     "sequelize": "^6.28.0"
+  },
+  "devDependencies": {
+    "prettier": "2.8.2"
   }
 }

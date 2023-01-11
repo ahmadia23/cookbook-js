@@ -16,10 +16,8 @@
             <button class="btn btn-primary">
               <a href="/cookbooks/<%=cookbook.id%>" class="text-white text-decoration-none"> See the full cookbook </a>
             </button>
-            <form method="post" action="/delete-cookbook">
-              <input type="hidden" name="id" value="<%=cookbook.id%>">
-              <button class="btn btn-danger" type="submit">Delete this Cookbook</button>
-            </form>
+            <input type="hidden" name="id" value="<%=cookbook.id%>">
+            <button class="btn btn-danger" onclick="deleteCookbook(this)" type="button">Delete this Cookbook</button>
 
           </div>
         </div>
@@ -34,3 +32,4 @@
   </button>
 </div>
 <%- include("includes/end.ejs") %>
+<script src="/js/admin.js"></script>

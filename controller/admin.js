@@ -201,14 +201,24 @@ exports.postAddCookbook =  (req,res, next) => {
   });
 }
 
-exports.postDeleteCookbook =  (req,res, next) => {
-  const id = req.body.id;
+exports.deleteCookbook =  (req,res, next) => {
+  const id = req.params.cookbookId;
   Cookbook.findByPk(id)
   .then((cookbook)=> {
-      cookbook.destroy();
-      res.redirect("/cookbooks");
-    })
-    .catch((err)=> {console.log(err)});
+    fileHelper.deleteFile(cookbook.imageUrl);
+    return cookbook.destroy()
+      .then((results) => {
+        console.log("heloooo delete cookbook")
+        res.status(200).json({message: "success"});
+      })
+      .catch((err)=>  {
+        console.log("hellloooooo");
+        res.status(500).json({message: "deleting failed"});
+      });
+  })
+  .catch((err)=>  {
+    res.status(500).json({message: "deleting failed"});
+  });
 }
 
 exports.postSaving =  (req,res, next) => {
@@ -238,9 +248,12 @@ exports.postSaving =  (req,res, next) => {
         .catch(err => console.log(err));
     })
     .then(() => {
-      res.redirect('/saved-recipes')
+      console.log("Saved Recipe");
+      res.status(200).json({message: "success"});
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      res.status(500).json({message: "deleting failed"});
+    });
 }
 
 exports.postSavingDeleteRecipe =  (req,res, next) => {
