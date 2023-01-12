@@ -11,7 +11,9 @@
       <% for(let recipe of recipes){ %>
         <div class="card-product">
           <h2 class="text-center"> <%=recipe.name%></h2>
-          <img src="/<%= recipe.imageUrl%>" />
+          <div class="recipe-detail__image">
+            <img src="/<%= recipe.imageUrl%>" />
+          </div>
           <div class="card-product-infos">
             <p> <%= recipe.description%></p>
             <p>Preparation time:  <%= recipe.time%>Minutes</p>

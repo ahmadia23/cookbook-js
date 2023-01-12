@@ -59,7 +59,7 @@ exports.postReset =  (req,res, next) => {
     .then(user => {
       if (!user[0]) {
         req.flash('error', 'no account with that email found');
-        res.redirect('/reset-account')
+        res.redirect('/reset-account');
       }
       user[0].resetToken = token;
       user[0].resetTokenExpiration = Date.now() + 3600000;
