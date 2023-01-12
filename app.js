@@ -10,6 +10,7 @@ const SequelizeStore = require("connect-session-sequelize")(
 );
 const flash = require("connect-flash");
 const multer = require("multer");
+const cors = require('cors');
 
 
 
@@ -79,6 +80,7 @@ app.use(
   );
 
 app.use(flash());
+app.use(cors());
 
 app.set('view engine', 'ejs');
 app.set("views", "views");

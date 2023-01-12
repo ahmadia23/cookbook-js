@@ -4,7 +4,7 @@ const Recipe = require("../models/recipe");
 exports.getHome = (req,res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   console.log(req.session);
-  res.json("../views/home", {
+  res.json({
     pageTitle: "home",
     cookbooks: "ok",
     isAuthenticated: isLoggedIn
@@ -16,7 +16,7 @@ exports.getCookbooks = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   Cookbook.findAll()
     .then((cookbooks) => {
-      res.render("cookbooks-index", {
+      res.json({
         pageTitle: "index of cookbooks",
         cookbooks: cookbooks,
         isAuthenticated: isLoggedIn
