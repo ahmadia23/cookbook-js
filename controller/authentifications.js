@@ -47,6 +47,7 @@ exports.getReset =  (req,res, next) => {
     isAuthenticated: isLoggedIn
   });
 }
+
 exports.postReset =  (req,res, next) => {
   const email = req.body.email
  crypto.randomBytes(32, (err, buffer) => {

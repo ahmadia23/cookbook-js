@@ -16,7 +16,7 @@ exports.getCookbooks = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   Cookbook.findAll()
     .then((cookbooks) => {
-      res.render("cookbooks-index", {
+      res.json({
         pageTitle: "index of cookbooks",
         cookbooks: cookbooks,
         isAuthenticated: isLoggedIn
