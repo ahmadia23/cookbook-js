@@ -2,10 +2,15 @@ const express = require("express");
 
 const path = require("path");
 const app = express();
+
+
 const bodyParser = require("body-parser");
 const session = require("express-session");
+
 const sequelize = require("./util/database");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const dotenv = require('dotenv').config();
+
 const flash = require("connect-flash");
 const multer = require("multer");
 const cors = require("cors");
