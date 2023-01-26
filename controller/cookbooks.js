@@ -3,8 +3,7 @@ const Recipe = require("../models/recipe");
 
 exports.getHome = (req,res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
-  console.log(req.session);
-  res.render("home", {
+  res.json({
     pageTitle: "home",
     cookbooks: "ok",
     isAuthenticated: isLoggedIn
@@ -30,7 +29,7 @@ exports.getCookbook = (req, res, next) => {
   const id = req.params.cookbookId
   Cookbook.findByPk(id)
     .then((cookbook) => {
-      res.render("cookbook-detail", {
+      res.json({
         pageTitle: cookbook.name,
         cookbook: cookbook,
         recipes: cookbook.recipes,
@@ -51,7 +50,7 @@ exports.getCookbookRecipes = (req, res, next) => {
         .then((recipes) => {
           if (cookbook.userId === req.user.id)
           {
-            return res.render("cookbook-recipes", {
+            return res.render({
               pageTitle: cookbook.title,
               cookbook: cookbook,
               recipes: recipes,
@@ -59,7 +58,7 @@ exports.getCookbookRecipes = (req, res, next) => {
               goodUser: true
             });
           }
-          res.render("cookbook-recipes", {
+          res.json({
             pageTitle: cookbook.title,
             cookbook: cookbook,
             recipes: recipes,

@@ -21,7 +21,7 @@ exports.getLogin =  (req,res, next) => {
     message = null;
   }
   const isLoggedIn = req.session.isLoggedIn;
-  res.render("../views/authentification/login", {
+  res.json({
     pageTitle: "Login Page",
     errorMessage: message,
     isAuthenticated: isLoggedIn,
@@ -41,7 +41,7 @@ exports.getReset =  (req,res, next) => {
     message = null;
   }
   const isLoggedIn = req.session.isLoggedIn;
-  res.render("../views/authentification/reset", {
+  res.json({
     pageTitle: "Reset password",
     errorMessage: message,
     isAuthenticated: isLoggedIn
