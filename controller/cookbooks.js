@@ -41,24 +41,24 @@ exports.getCookbook = (req, res, next) => {
 exports.getCookbookRecipes = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId;
-  console.log("hello")
 
   Cookbook.findByPk(id)
     .then((cookbook) => {
       //check if cookbook's recipes belongs to the user
         Recipe.findAll({where: {cookbookId: id}})
         .then((recipes) => {
-          if (cookbook.userId === req.user.id)
-          {
-            return res.render({
-              pageTitle: cookbook.title,
-              cookbook: cookbook,
-              recipes: recipes,
-              isAuthenticated: isLoggedIn,
-              goodUser: true
-            });
-          }
-          res.json({
+          console.log(cookbook)
+          // if (cookbook.userId === req.user.id)
+          // {
+          //   return res.render({
+          //     pageTitle: cookbook.title,
+          //     cookbook: cookbook,
+          //     recipes: recipes,
+          //     isAuthenticated: isLoggedIn,
+          //     goodUser: true
+          //   });
+          // }
+          return res.json({
             pageTitle: cookbook.title,
             cookbook: cookbook,
             recipes: recipes,
