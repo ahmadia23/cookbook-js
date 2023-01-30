@@ -2,6 +2,7 @@ const express = require("express");
 
 const path = require("path");
 const app = express();
+const expressGraphQL = require('express-graphql');
 
 
 
@@ -53,6 +54,9 @@ const ejs = require("ejs");
 const authRoutes = require("./routes/auth.js");
 const cookbookRoutes = require("./routes/cookbook.js");
 
+const graphqlSchema =  require('./graphQL/schema');
+const graphqlResolver = require('./graphQL/resolver');
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   multer({
@@ -74,6 +78,13 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS"){
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 app.use(flash());
 app.use(cors());
@@ -98,7 +109,13 @@ app.use((req, res, next) => {
 });
 
 app.use(cookbookRoutes);
-app.use(authRoutes);
+// app.use(authRoutes);
+
+app.use("/graphql", expressGraphQL.graphqlHTTP({
+  schema: graphqlSchema,
+  rootValue: graphqlResolver,
+  graphiql: true
+}))
 
 app.use(cookbookController.getHome);
 app.use(errorController.get404);

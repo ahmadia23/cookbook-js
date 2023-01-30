@@ -10,64 +10,61 @@ exports.getHome = (req, res, next) => {
   });
 };
 
-exports.getCookbooks = (req, res, next) => {
+exports.getCookbooks = async (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
-  Cookbook.findAll()
-    .then((cookbooks) => {
-      res.json({
-        pageTitle: "index of cookbooks",
-        cookbooks: cookbooks,
-        isAuthenticated: isLoggedIn,
-      });
-    })
-    .catch((err) => console.log(err));
+  try {
+    const cookbooks = await Cookbook.findAll();
+    res.json({
+      pageTitle: "index of cookbooks",
+      cookbooks: cookbooks,
+      isAuthenticated: isLoggedIn,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-exports.getCookbook = (req, res, next) => {
+exports.getCookbook = async (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId;
-  Cookbook.findByPk(id)
-    .then((cookbook) => {
-      res.json({
-        pageTitle: cookbook.name,
-        cookbook: cookbook,
-        recipes: cookbook.recipes,
-        isAuthenticated: isLoggedIn,
-      });
-    })
-    .catch((err) => console.log(err));
+  try {
+    const cookbook = await Cookbook.findByPk(id);
+    res.json({
+      pageTitle: cookbook.name,
+      cookbook: cookbook,
+      recipes: cookbook.recipes,
+      isAuthenticated: isLoggedIn,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
-exports.getCookbookRecipes = (req, res, next) => {
+
+exports.getCookbookRecipes = async (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId;
-
-  Cookbook.findByPk(id)
-    .then((cookbook) => {
-      //check if cookbook's recipes belongs to the user
-      Recipe.findAll({ where: { cookbookId: id } })
-        .then((recipes) => {
-          console.log(cookbook);
-          // if (cookbook.userId === req.user.id)
-          // {
-          //   return res.render({
-          //     pageTitle: cookbook.title,
-          //     cookbook: cookbook,
-          //     recipes: recipes,
-          //     isAuthenticated: isLoggedIn,
-          //     goodUser: true
-          //   });
-          // }
-          return res.json({
-            pageTitle: cookbook.title,
-            cookbook: cookbook,
-            recipes: recipes,
-            isAuthenticated: isLoggedIn,
-            goodUser: false,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-    .catch((err) => console.log(err));
+  try {
+    const cookbook = await Cookbook.findByPk(id);
+    //check if cookbook's recipes belongs to the user
+    const recipes = await Recipe.findAll({ where: { cookbookId: id } });
+    res.json({
+      pageTitle: cookbook.title,
+      cookbook: cookbook,
+      recipes: recipes,
+      isAuthenticated: isLoggedIn,
+      goodUser: false,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  // if (cookbook.userId === req.user.id)
+  // {
+  //   return res.render({
+  //     pageTitle: cookbook.title,
+  //     cookbook: cookbook,
+  //     recipes: recipes,
+  //     isAuthenticated: isLoggedIn,
+  //     goodUser: true
+  //   });
+  // }
 };
