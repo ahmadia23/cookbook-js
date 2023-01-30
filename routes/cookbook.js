@@ -39,7 +39,7 @@ router.post("/cookbooks/:cookbookId/add-recipe",
 ,isAuth, adminController.postAddRecipe);
 
 router.get("/new-cookbook",isAuth, adminController.getAddCookbook);
-router.post("/new-cookbook", check(),isAuth, adminController.postAddCookbook);
+router.post("/new-cookbook", adminController.postAddCookbook);
 
 router.get("/cookbooks/:cookbookId/edit-recipe/:id", isAuth, adminController.getEditRecipe);
 router.post("/cookbooks/:cookbookId/edit-recipe/:id", isAuth, adminController.postEditRecipe);

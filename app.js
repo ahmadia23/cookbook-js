@@ -4,6 +4,7 @@ const path = require("path");
 const app = express();
 
 
+
 const bodyParser = require("body-parser");
 const session = require("express-session");
 
@@ -76,6 +77,8 @@ app.use(
 
 app.use(flash());
 app.use(cors());
+app.use(express.json());
+
 
 app.set("view engine", "ejs");
 app.set("views", "views");

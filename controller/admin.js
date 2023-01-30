@@ -1,6 +1,7 @@
 const Recipe = require("../models/recipe");
 const Cookbook = require("../models/cookbook");
 const fileHelper = require("../util/file");
+const User = require("../models/user");
 
 
 exports.getAddRecipe =  (req,res, next) => {
@@ -167,38 +168,62 @@ exports.getAddCookbook = (req,res, next) => {
   });
 }
 
+// exports.postAddCookbook =  (req,res, next) => {
+//   const name = req.body.name;
+//   const theme = req.body.theme;
+//   const image = req.file;
+//   const description = req.body.description
+//   if (!image){
+//     return res.status(422).render("../views/new-cookbook", {
+//       pageTitle: "new cookbook",
+//       isAuthenticated: isLoggedIn,
+//       cookbook: {
+//         name: name,
+//         theme: theme,
+//         description: description
+//       },
+//       errorMessage: 'Attached file is not an image !.',
+//       validationErrors: []
+//     });
+//   }
+//   const imageUrl = image.path;
+
+//   req.user.createCookbook({
+//     name: name,
+//     theme: theme,
+//     imageUrl: imageUrl,
+//     description: description
+//   })
+//   .then(results => {
+//     console.log("created Cookbook");
+//     res.redirect("/cookbooks");
+//   }).catch(err => {
+//     console.log(err)
+//   });
+// }
+
 exports.postAddCookbook =  (req,res, next) => {
+  console.log("hellooooooooooo");
+  console.log(req.body)
+  const user = new User({
+    email: "somemail@gmail.com",
+    password: "Adou232323@"
+  });
   const name = req.body.name;
   const theme = req.body.theme;
-  const image = req.file;
-  const description = req.body.description
-  if (!image){
-    return res.status(422).render("../views/new-cookbook", {
-      pageTitle: "new cookbook",
-      isAuthenticated: isLoggedIn,
-      cookbook: {
-        name: name,
-        theme: theme,
-        description: description
-      },
-      errorMessage: 'Attached file is not an image !.',
-      validationErrors: []
-    });
-  }
-  const imageUrl = image.path;
-
-  req.user.createCookbook({
-    name: name,
-    theme: theme,
-    imageUrl: imageUrl,
-    description: description
+  const image = req.body.image;
+  const description = req.body.description;
+  user.createCookbook({
+      name: name,
+      theme: theme,
+      imageUrl: image,
+      description: description
   })
   .then(results => {
-    console.log("created Cookbook");
-    res.redirect("/cookbooks");
-  }).catch(err => {
-    console.log(err)
-  });
+    console.log(results);
+    res.redirect("/cookbooks")
+  })
+  .catch(err => console.log(err))
 }
 
 exports.deleteCookbook =  (req,res, next) => {

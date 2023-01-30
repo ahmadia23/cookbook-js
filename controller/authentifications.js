@@ -183,7 +183,6 @@ exports.postSignup =  (req,res, next) => {
         password: hashedPassword,
       });
       user.createSaving();
-      console.log(user);
       return user.save();
     })
     .then((results) => {

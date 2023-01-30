@@ -1,15 +1,14 @@
 const Cookbook = require("../models/cookbook");
 const Recipe = require("../models/recipe");
 
-exports.getHome = (req,res, next) => {
+exports.getHome = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   res.json({
     pageTitle: "home",
     cookbooks: "ok",
-    isAuthenticated: isLoggedIn
+    isAuthenticated: isLoggedIn,
   });
-}
-
+};
 
 exports.getCookbooks = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
@@ -18,26 +17,26 @@ exports.getCookbooks = (req, res, next) => {
       res.json({
         pageTitle: "index of cookbooks",
         cookbooks: cookbooks,
-        isAuthenticated: isLoggedIn
+        isAuthenticated: isLoggedIn,
       });
     })
-    .catch(err => console.log(err));
-}
+    .catch((err) => console.log(err));
+};
 
 exports.getCookbook = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
-  const id = req.params.cookbookId
+  const id = req.params.cookbookId;
   Cookbook.findByPk(id)
     .then((cookbook) => {
       res.json({
         pageTitle: cookbook.name,
         cookbook: cookbook,
         recipes: cookbook.recipes,
-        isAuthenticated: isLoggedIn
+        isAuthenticated: isLoggedIn,
       });
     })
-    .catch(err => console.log(err));
-}
+    .catch((err) => console.log(err));
+};
 exports.getCookbookRecipes = (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId;
@@ -45,9 +44,9 @@ exports.getCookbookRecipes = (req, res, next) => {
   Cookbook.findByPk(id)
     .then((cookbook) => {
       //check if cookbook's recipes belongs to the user
-        Recipe.findAll({where: {cookbookId: id}})
+      Recipe.findAll({ where: { cookbookId: id } })
         .then((recipes) => {
-          console.log(cookbook)
+          console.log(cookbook);
           // if (cookbook.userId === req.user.id)
           // {
           //   return res.render({
@@ -63,12 +62,12 @@ exports.getCookbookRecipes = (req, res, next) => {
             cookbook: cookbook,
             recipes: recipes,
             isAuthenticated: isLoggedIn,
-            goodUser: false
+            goodUser: false,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
-        })
+        });
     })
-    .catch(err => console.log(err));
-}
+    .catch((err) => console.log(err));
+};
