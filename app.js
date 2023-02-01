@@ -2,7 +2,7 @@ const express = require("express");
 
 const path = require("path");
 const app = express();
-const expressGraphQL = require('express-graphql');
+
 
 
 
@@ -54,16 +54,16 @@ const ejs = require("ejs");
 const authRoutes = require("./routes/auth.js");
 const cookbookRoutes = require("./routes/cookbook.js");
 
-const graphqlSchema =  require('./graphQL/schema');
-const graphqlResolver = require('./graphQL/resolver');
 
+
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   multer({
     storage: fileStorage,
     fileFilter: fileFilter,
   }).single("image")
-);
+  );
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "images")));
@@ -87,7 +87,6 @@ app.use((req, res, next) => {
 });
 
 app.use(flash());
-app.use(cors());
 app.use(express.json());
 
 
@@ -111,11 +110,6 @@ app.use((req, res, next) => {
 app.use(cookbookRoutes);
 // app.use(authRoutes);
 
-app.use("/graphql", expressGraphQL.graphqlHTTP({
-  schema: graphqlSchema,
-  rootValue: graphqlResolver,
-  graphiql: true
-}))
 
 app.use(cookbookController.getHome);
 app.use(errorController.get404);
@@ -133,6 +127,7 @@ sequelize
   .sync()
   .then((saving) => {
     app.listen(8080);
+    // User.create({email: "ahmadou92@hotmail.fr", password: "Adou232323"})
   })
   .catch((err) => {
     console.log(err);
