@@ -3,15 +3,12 @@ const express = require("express");
 const path = require("path");
 const app = express();
 
-
-
-
 const bodyParser = require("body-parser");
 const session = require("express-session");
 
 const sequelize = require("./util/database");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
-const dotenv = require('dotenv').config();
+const dotenv = require("dotenv").config();
 
 const flash = require("connect-flash");
 const multer = require("multer");
@@ -54,8 +51,6 @@ const ejs = require("ejs");
 const authRoutes = require("./routes/auth.js");
 const cookbookRoutes = require("./routes/cookbook.js");
 
-
-
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
@@ -63,7 +58,7 @@ app.use(
     storage: fileStorage,
     fileFilter: fileFilter,
   }).single("image")
-  );
+);
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "images")));
@@ -80,7 +75,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  if (req.method === "OPTIONS"){
+  if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
   next();
@@ -88,10 +83,6 @@ app.use((req, res, next) => {
 
 app.use(flash());
 app.use(express.json());
-
-
-app.set("view engine", "ejs");
-app.set("views", "views");
 
 app.use((req, res, next) => {
   if (!req.session.user) {
@@ -108,18 +99,16 @@ app.use((req, res, next) => {
 });
 
 app.use(cookbookRoutes);
-// app.use(authRoutes);
+app.use(authRoutes);
 
-
-app.use(cookbookController.getHome);
 app.use(errorController.get404);
 
 Recipe.belongsTo(Cookbook, { constraints: true, onDelete: "CASCADE" });
-User.hasOne(Cookbook);
+User.hasOne(Cookbook, { constraints: true, onDelete: "CASCADE" });
 Cookbook.hasMany(Recipe);
 
 Cookbook.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
-User.hasOne(Saving);
+User.hasOne(Saving, { constraints: true, onDelete: "CASCADE" });
 Saving.belongsToMany(Recipe, { through: SavingItem });
 Recipe.belongsToMany(Saving, { through: SavingItem });
 

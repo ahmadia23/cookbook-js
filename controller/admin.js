@@ -4,7 +4,6 @@ const fileHelper = require("../util/file");
 const User = require("../models/user");
 
 exports.getAddRecipe = async (req, res, next) => {
-  const isLoggedIn = req.session.isLoggedIn;
   const id = req.params.cookbookId;
   if (!isLoggedIn) {
     res.redirect("/login");
@@ -26,7 +25,6 @@ exports.getAddRecipe = async (req, res, next) => {
 };
 
 exports.postAddRecipe = async (req, res, next) => {
-  const isLoggedIn = req.session.isLoggedIn;
   const name = req.body.name;
   const description = req.body.description;
   const time = req.body.time;
@@ -65,7 +63,6 @@ exports.postAddRecipe = async (req, res, next) => {
 };
 
 exports.getEditRecipe = async (req, res, next) => {
-  const isLoggedIn = req.session.isLoggedIn;
   const editMode = req.query.edit;
   console.log(editMode);
   if (!editMode) {
@@ -90,7 +87,6 @@ exports.getEditRecipe = async (req, res, next) => {
 };
 
 exports.postEditRecipe = async (req, res, next) => {
-  console.log("hellooooooooooo theeeere");
   const id = req.body.id;
   const cookbookId = req.params.cookbookId;
   const name = req.body.name;
@@ -144,8 +140,6 @@ exports.getAddCookbook = (req, res, next) => {
 };
 
 exports.postAddCookbook = async (req, res, next) => {
-  console.log("hellooooooooooo");
-  console.log(req.body);
   const user = new User({
     email: "somemail@gmail.com",
     password: "Adou232323@",
@@ -174,10 +168,8 @@ exports.deleteCookbook = async (req, res, next) => {
     const cookbook = await Cookbook.findByPk(id);
     fileHelper.deleteFile(cookbook.imageUrl);
     await cookbook.destroy();
-    console.log("heloooo delete cookbook");
     res.status(200).json({ message: "success" });
   } catch (err) {
-    console.log("hellloooooo");
     res.status(500).json({ message: "deleting failed" });
   }
 };
@@ -213,7 +205,6 @@ exports.postSaving = async (req, res, next) => {
 exports.postSavingDeleteRecipe = async (req, res, next) => {
   try {
     const recipeId = req.body.id;
-    console.log("hellooooooo");
     const saving = await req.user.getSaving();
     const recipes = await saving.getRecipes({ where: { id: recipeId } });
     const recipe = recipes[0];

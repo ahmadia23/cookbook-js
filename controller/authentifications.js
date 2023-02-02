@@ -21,11 +21,9 @@ exports.getLogin = (req, res, next) => {
   } else {
     message = null;
   }
-  const isLoggedIn = req.session.isLoggedIn;
   res.json({
     pageTitle: "Login Page",
     errorMessage: message,
-    isAuthenticated: isLoggedIn,
     oldInput: {
       email: "",
       password: "",
@@ -41,11 +39,9 @@ exports.getReset = (req, res, next) => {
   } else {
     message = null;
   }
-  const isLoggedIn = req.session.isLoggedIn;
   res.json({
     pageTitle: "Reset password",
     errorMessage: message,
-    isAuthenticated: isLoggedIn,
   });
 };
 
@@ -75,7 +71,6 @@ exports.postReset = async (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
-  const isLoggedIn = req.session.isLoggedIn;
   let message = req.flash("error");
   if (message.length > 0) {
     message = message[0];
@@ -85,7 +80,6 @@ exports.getSignup = (req, res, next) => {
   res.render("../views/authentification/signup", {
     pageTitle: "Login Page",
     errorMessage: message,
-    isAuthenticated: isLoggedIn,
     oldInput: { email: "", password: "", confirmedPassword: "" },
     validationErrors: [],
   });
@@ -94,14 +88,12 @@ exports.getSignup = (req, res, next) => {
 exports.postLogin = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const isLoggedIn = req.session.isLoggedIn;
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("../views/authentification/login", {
       pageTitle: "Login Page",
       errorMessage: errors.array()[0].msg,
-      isAuthenticated: isLoggedIn,
       oldInput: { email: email, password: password },
       validationErrors: errors.array(),
     });
@@ -113,14 +105,12 @@ exports.postLogin = async (req, res, next) => {
       return res.status(422).render("../views/authentification/login", {
         pageTitle: "Login Page",
         errorMessage: "Invalid email or password",
-        isAuthenticated: isLoggedIn,
         oldInput: { email: email, password: password },
         validationErrors: errors.array(),
       });
     }
     const doMatch = await bcrypt.compare(password, user[0].password);
     if (doMatch) {
-      req.session.isLoggedIn = true;
       req.session.user = user;
       await req.session.save((err) => {
         console.log(err);
@@ -130,7 +120,6 @@ exports.postLogin = async (req, res, next) => {
       return res.status(422).render("../views/authentification/login", {
         pageTitle: "Login Page",
         errorMessage: "Invalid email or password",
-        isAuthenticated: isLoggedIn,
         oldInput: { email: email, password: password },
         validationErrors: errors.array(),
       });
@@ -145,13 +134,11 @@ exports.postSignup = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confirmedPassword = req.body.confirmedPassword;
-  const isLoggedIn = req.session.isLoggedIn;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render("../views/authentification/signup", {
+    return res.status(422).json({
       pageTitle: "Login Page",
       errorMessage: errors.array()[0].msg,
-      isAuthenticated: isLoggedIn,
       oldInput: {
         email: email,
         password: password,
@@ -193,13 +180,11 @@ exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confirmedPassword = req.body.confirmedPassword;
-  const isLoggedIn = req.session.isLoggedIn;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render("../views/authentification/signup", {
+    return res.status(422).json({
       pageTitle: "Login Page",
       errorMessage: errors.array()[0].msg,
-      isAuthenticated: isLoggedIn,
       oldInput: {
         email: email,
         password: password,
@@ -212,8 +197,9 @@ exports.postSignup = (req, res, next) => {
     .then(([userRec]) => {
       if (userRec) {
         console.log("pooost siiignup");
-        req.flash("error", "email already exists, please pick another one !");
-        return res.redirect("/sign-up");
+        return res.json({
+          errorMessage: "Email already exists, please pick another one !",
+        });
       }
       return bcrypt
         .hash(password, 12)
@@ -224,15 +210,6 @@ exports.postSignup = (req, res, next) => {
           });
           user.createSaving();
           return user.save();
-        })
-        .then((results) => {
-          res.redirect("/login");
-          return transporter.sendMail({
-            to: email,
-            from: "contact@my-cookbook.com",
-            subject: "Signup succeeded !",
-            html: "<h1> You successfully signe up ! </h1>",
-          });
         })
         .catch((err) => {
           console.log(err);
@@ -247,14 +224,12 @@ exports.postSignup = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confirmedPassword = req.body.confirmedPassword;
-  const isLoggedIn = req.session.isLoggedIn;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    return res.status(422).render("../views/authentification/signup", {
+    return res.status(422).json({
       pageTitle: "Signup Page",
       errorMessage: errors.array()[0].msg,
-      isAuthenticated: isLoggedIn,
       oldInput: {
         email: email,
         password: password,
@@ -267,8 +242,9 @@ exports.postSignup = async (req, res, next) => {
   try {
     const [userRec] = await User.findAll({ where: { email: email } });
     if (userRec) {
-      req.flash("error", "email already exists, please pick another one !");
-      return res.redirect("/sign-up");
+      return res.status(422).json({
+        errorMessage: "email already been chosen, please pick another one !",
+      });
     }
     const hashedPassword = await bcrypt.hash(password, 12);
     const user = new User({
@@ -278,13 +254,15 @@ exports.postSignup = async (req, res, next) => {
     await user.createSaving();
     await user.save();
     req.flash("success", "Signup succeeded, Please login");
-    res.redirect("/login");
-    await transporter.sendMail({
-      to: email,
-      from: "contact@my-cookbook.com",
-      subject: "Signup succeeded !",
-      html: "<h1> You successfully signup ! </h1>",
+    res.json({
+      message: "successfully signed up",
     });
+    // await transporter.sendMail({
+    //   to: email,
+    //   from: "contact@my-cookbook.com",
+    //   subject: "Signup succeeded !",
+    //   html: "<h1> You successfully signup ! </h1>",
+    // });
   } catch (err) {
     console.log(err);
   }
@@ -299,7 +277,6 @@ exports.postLogout = (req, res, next) => {
 };
 
 exports.getNewPassword = async (req, res, next) => {
-  const isLoggedIn = req.session.isLoggedIn;
   const token = req.params.token;
   try {
     const user = await User.findByPk(1);
@@ -313,7 +290,6 @@ exports.getNewPassword = async (req, res, next) => {
     res.render("../views/authentification/new-password", {
       pageTitle: "New password",
       errorMessage: message,
-      isAuthenticated: isLoggedIn,
       userId: user[0].id,
       token: token,
     });
@@ -344,6 +320,6 @@ exports.postNewPassword = async (req, res, next) => {
     });
     res.redirect("/login");
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };

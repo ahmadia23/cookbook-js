@@ -30,9 +30,9 @@ router.get("/reset/:token", authController.getNewPassword);
 router.post("/new-password", authController.postNewPassword);
 
 
-router.get("/sign-up", authController.getSignup);
+router.get("/signup", authController.getSignup);
 router.post(
-      "/sign-up",
+      "/signup",
       [ check('email')
       .isEmail()
       .withMessage("Please add a valid email. ")
