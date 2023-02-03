@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 const { validationResult } = require("express-validator/check");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
@@ -102,7 +103,7 @@ exports.postLogin = async (req, res, next) => {
   try {
     const user = await User.findAll({ where: { email: email } });
     if (!user[0]) {
-      return res.status(422).render("../views/authentification/login", {
+      return res.status(422).json({
         pageTitle: "Login Page",
         errorMessage: "Invalid email or password",
         oldInput: { email: email, password: password },
@@ -111,13 +112,14 @@ exports.postLogin = async (req, res, next) => {
     }
     const doMatch = await bcrypt.compare(password, user[0].password);
     if (doMatch) {
-      req.session.user = user;
-      await req.session.save((err) => {
-        console.log(err);
-        res.redirect("/");
-      });
+      const token = jwt.sign(
+        { email: email, userId: user.id },
+        "somesupersecret",
+        { expiresIn: "1h" }
+      );
+      return res.status(200).json({ token: token, userId: user.id });
     } else {
-      return res.status(422).render("../views/authentification/login", {
+      return res.status(422).json({
         pageTitle: "Login Page",
         errorMessage: "Invalid email or password",
         oldInput: { email: email, password: password },
@@ -176,49 +178,49 @@ exports.postSignup = async (req, res, next) => {
   }
 };
 
-exports.postSignup = (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const confirmedPassword = req.body.confirmedPassword;
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      pageTitle: "Login Page",
-      errorMessage: errors.array()[0].msg,
-      oldInput: {
-        email: email,
-        password: password,
-        confirmedPassword: confirmedPassword,
-      },
-      validationErrors: errors.array(),
-    });
-  }
-  User.findAll({ where: { email: email } })
-    .then(([userRec]) => {
-      if (userRec) {
-        console.log("pooost siiignup");
-        return res.json({
-          errorMessage: "Email already exists, please pick another one !",
-        });
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const user = new User({
-            email: email,
-            password: hashedPassword,
-          });
-          user.createSaving();
-          return user.save();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+// exports.postSignup = (req, res, next) => {
+//   const email = req.body.email;
+//   const password = req.body.password;
+//   const confirmedPassword = req.body.confirmedPassword;
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(422).json({
+//       pageTitle: "Login Page",
+//       errorMessage: errors.array()[0].msg,
+//       oldInput: {
+//         email: email,
+//         password: password,
+//         confirmedPassword: confirmedPassword,
+//       },
+//       validationErrors: errors.array(),
+//     });
+//   }
+//   User.findAll({ where: { email: email } })
+//     .then(([userRec]) => {
+//       if (userRec) {
+//         console.log("pooost siiignup");
+//         return res.json({
+//           errorMessage: "Email already exists, please pick another one !",
+//         });
+//       }
+//       return bcrypt
+//         .hash(password, 12)
+//         .then((hashedPassword) => {
+//           const user = new User({
+//             email: email,
+//             password: hashedPassword,
+//           });
+//           user.createSaving();
+//           return user.save();
+//         })
+//         .catch((err) => {
+//           console.log(err);
+//         });
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// };
 
 exports.postSignup = async (req, res, next) => {
   const email = req.body.email;
