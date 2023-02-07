@@ -1,13 +1,29 @@
+const jwt = require("jsonwebtoken");
 
-// si le compte est créer implémenter le login
-// récupérer inputs email et valider sinon rediriger
-// si email est bon, vérifier le mot de passe en le décryptant
-// si c'est good, créer un token et l'envoyer ainsi que l'id de l'user
+module.exports = (req, res, next) => {
+  const authHeaders = req.get("Authorization");
 
+  if (!authHeaders) {
+    const error = new Error("Not Authenticated.");
+    error.statusCode = 401;
+    throw error;
+  }
 
-// module.exports = ((req, res, next) => {
-//   if (! req.session.isLoggedIn){
-//     return res.json("/login");
-//   }
-//   next();
-// });
+  const token = authHeaders.split(" ")[1];
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(token, "somesupersecret");
+  } catch (error) {
+    error.statusCode = 500;
+    throw error;
+  }
+  if (!decodedToken) {
+    const error = new Error("Not Authenticated.");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  req.userId = decodedToken.userId;
+  next();
+};

@@ -44,7 +44,7 @@ exports.postAddRecipe = async (req, res, next) => {
   }
   try {
     const cookbook = await Cookbook.findByPk(id);
-    if (cookbook.userId === req.user.id) {
+    if (cookbook.userId === req.userId) {
       const recipe = await cookbook.createRecipe({
         name: name,
         description: description,
