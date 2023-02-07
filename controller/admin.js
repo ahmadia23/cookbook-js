@@ -28,12 +28,11 @@ exports.postAddRecipe = async (req, res, next) => {
   const name = req.body.name;
   const description = req.body.description;
   const time = req.body.time;
-  const image = req.file;
+  const image = req.body.image;
   const id = req.params.cookbookId;
   if (!image) {
-    return res.status(422).render("../views/add-recipe", {
+    return res.status(422).json({
       pageTitle: "new recipe",
-      isAuthenticated: isLoggedIn,
       recipe: {
         name: name,
         theme: theme,

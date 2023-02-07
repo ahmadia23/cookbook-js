@@ -92,7 +92,7 @@ exports.postLogin = async (req, res, next) => {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render("../views/authentification/login", {
+    return res.status(422).json({
       pageTitle: "Login Page",
       errorMessage: errors.array()[0].msg,
       oldInput: { email: email, password: password },
@@ -113,11 +113,11 @@ exports.postLogin = async (req, res, next) => {
     const doMatch = await bcrypt.compare(password, user[0].password);
     if (doMatch) {
       const token = jwt.sign(
-        { email: email, userId: user.id },
+        { email: email, userId: user[0].id },
         "somesupersecret",
         { expiresIn: "1h" }
       );
-      return res.status(200).json({ token: token, userId: user.id });
+      return res.status(200).json({ token: token, userId: user[0].id });
     } else {
       return res.status(422).json({
         pageTitle: "Login Page",
@@ -129,52 +129,6 @@ exports.postLogin = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     res.redirect("/login");
-  }
-};
-
-exports.postSignup = async (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const confirmedPassword = req.body.confirmedPassword;
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      pageTitle: "Login Page",
-      errorMessage: errors.array()[0].msg,
-      oldInput: {
-        email: email,
-        password: password,
-        confirmedPassword: confirmedPassword,
-      },
-      validationErrors: errors.array(),
-    });
-  }
-  try {
-    const user = await User.findAll({ where: { email: email } });
-    if (userRec) {
-      console.log("pooost siiignup");
-      req.flash("error", "email already exists, please pick another one !");
-      return res.redirect("/sign-up");
-    }
-    try {
-      const hashedPassword = await bcrypt.hash(password, 12);
-      const user = new User({
-        email: email,
-        password: hashedPassword,
-      });
-      const result = await user.createSaving().save();
-      res.redirect("/login");
-      return transporter.sendMail({
-        to: email,
-        from: "contact@my-cookbook.com",
-        subject: "Signup succeeded !",
-        html: "<h1> You successfully signe up ! </h1>",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  } catch (error) {
-    console.log(error);
   }
 };
 
