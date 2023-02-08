@@ -7,6 +7,7 @@ const isAuth = require("../middleware/is-auth");
 
 const router = express.Router();
 
+router.get("/allow/cookbookId", isAuth, adminController.authorize);
 router.get("/saved-recipes", isAuth, recipesController.getSavingRecipes);
 router.post("/cookbooks/recipes", isAuth, adminController.postSaving);
 router.get("/my-recipes", isAuth, recipesController.getMyRecipes);
@@ -22,11 +23,11 @@ router.get("/recipes/:id", recipesController.getRecipe);
 
 router.get("/cookbooks", cookbookController.getCookbooks);
 
-router.get(
-  "/cookbooks/:cookbookId/add-recipe",
-  isAuth,
-  adminController.getAddRecipe
-);
+// router.get(
+//   "/cookbooks/:cookbookId/add-recipe",
+//   isAuth,
+//   adminController.getAddRecipe
+// );
 router.post(
   "/cookbooks/:cookbookId/add-recipe",
   [

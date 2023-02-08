@@ -1,28 +1,30 @@
-const {Sequelize, DataTypes} = require('sequelize');
+const { Sequelize, DataTypes } = require("sequelize");
 
+const sequelize = require("../util/database");
 
-const sequelize = require('../util/database');
-
-const Recipe = sequelize.define('recipe', {
+const Recipe = sequelize.define("recipe", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true
+    primaryKey: true,
   },
   name: DataTypes.STRING,
   imageUrl: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   description: {
-    type: DataTypes.TEXT('long'),
-    allowNull: false
+    type: DataTypes.TEXT("long"),
+    allowNull: false,
   },
   time: {
     type: DataTypes.INTEGER,
-    allowNull: false
-  }
+    allowNull: false,
+  },
+  ingredients: {
+    type: DataTypes.STRING,
+  },
 });
 
 module.exports = Recipe;

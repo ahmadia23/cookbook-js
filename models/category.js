@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 
 const sequelize = require("../util/database");
 
-const Cookbook = sequelize.define("cookbook", {
+const Category = sequelize.define("category", {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -10,15 +10,14 @@ const Cookbook = sequelize.define("cookbook", {
     primaryKey: true,
   },
   name: Sequelize.STRING,
-  imageUrl: {
+  theme: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  theme: Sequelize.STRING,
   description: {
     type: Sequelize.TEXT("long"),
     allowNull: false,
   },
 });
 
-module.exports = Cookbook;
+module.exports = Category;

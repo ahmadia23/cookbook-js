@@ -3,25 +3,39 @@ const Cookbook = require("../models/cookbook");
 const fileHelper = require("../util/file");
 const User = require("../models/user");
 
-exports.getAddRecipe = async (req, res, next) => {
-  const id = req.params.cookbookId;
-  if (!isLoggedIn) {
-    res.redirect("/login");
-  }
-  try {
-    const cookbook = await Cookbook.findByPk(id);
-    if (cookbook.userId !== req.user.id) {
-      return res.redirect(`/cookbooks/${cookbook.id}/recipes`);
-    }
-    res.json("add-recipe", {
-      pageTitle: "Add Recipe",
-      editing: false,
-      cookbook: cookbook,
-      isAuthenticated: isLoggedIn,
-    });
-  } catch (error) {
-    console.log(error);
-  }
+// exports.getAddRecipe = async (req, res, next) => {
+//   const id = req.params.cookbookId;
+//   try {
+//     const cookbook = await Cookbook.findByPk(id);
+//     if (cookbook.userId !== req.useriId) {
+//       return res
+//         .status(500)
+//         .json({ error: "can't add a recipe on this cookbook" });
+//     }
+//     res.json("add-recipe", {
+//       pageTitle: "Add Recipe",
+//       editing: false,
+//       cookbook: cookbook,
+//       isAuthenticated: isLoggedIn,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+exports.authorize = async (req, res, next) => {
+  console.log("go to see the response");
+  const userId = req.userId;
+  const cookbookId = req.params.cookbookId;
+  console.log(userId);
+  console.log(cookbookId);
+  return res.json({ message: "ok" });
+  // const cookbook = await Cookbook.findAll({ where: { id: cookbookId } });
+  // if (userId !== cookbook.userId) {
+  //   return res.json({ authorized: false });
+  // } else {
+  //   return res.json({ authorized: true });
+  // }
 };
 
 exports.postAddRecipe = async (req, res, next) => {
@@ -30,18 +44,18 @@ exports.postAddRecipe = async (req, res, next) => {
   const time = req.body.time;
   const image = req.body.image;
   const id = req.params.cookbookId;
-  if (!image) {
-    return res.status(422).json({
-      pageTitle: "new recipe",
-      recipe: {
-        name: name,
-        theme: theme,
-        description: description,
-      },
-      errorMessage: "Attached file is not an image !.",
-      validationErrors: [],
-    });
-  }
+  // if (!image) {
+  //   return res.status(422).json({
+  //     pageTitle: "new recipe",
+  //     recipe: {
+  //       name: name,
+  //       theme: theme,
+  //       description: description,
+  //     },
+  //     errorMessage: "Attached file is not an image !.",
+  //     validationErrors: [],
+  //   });
+  // }
   try {
     const cookbook = await Cookbook.findByPk(id);
     if (cookbook.userId === req.userId) {
@@ -52,7 +66,7 @@ exports.postAddRecipe = async (req, res, next) => {
         imageUrl: image.path,
       });
       console.log("created recipe");
-      res.redirect(`/cookbooks/${id}/recipes`);
+      res.status(200).json({ recipe: recipe, cookbook: cookbook });
     } else {
       throw new Error("Unauthorized to create recipe");
     }
@@ -62,11 +76,6 @@ exports.postAddRecipe = async (req, res, next) => {
 };
 
 exports.getEditRecipe = async (req, res, next) => {
-  const editMode = req.query.edit;
-  console.log(editMode);
-  if (!editMode) {
-    return res.redirect("/");
-  }
   const cookbookId = req.params.cookbookId;
   const id = req.params.id;
   try {
