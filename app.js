@@ -113,7 +113,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 Recipe.belongsTo(Cookbook, { constraints: true, onDelete: "CASCADE" });
-User.hasOne(Cookbook, { constraints: true, onDelete: "CASCADE" });
+User.hasMany(Cookbook, { constraints: true, onDelete: "CASCADE" });
 Cookbook.hasMany(Recipe);
 Cookbook.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasOne(Saving, { constraints: true, onDelete: "CASCADE" });

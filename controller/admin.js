@@ -3,47 +3,31 @@ const Cookbook = require("../models/cookbook");
 const fileHelper = require("../util/file");
 const User = require("../models/user");
 
-// exports.getAddRecipe = async (req, res, next) => {
-//   const id = req.params.cookbookId;
-//   try {
-//     const cookbook = await Cookbook.findByPk(id);
-//     if (cookbook.userId !== req.useriId) {
-//       return res
-//         .status(500)
-//         .json({ error: "can't add a recipe on this cookbook" });
-//     }
-//     res.json("add-recipe", {
-//       pageTitle: "Add Recipe",
-//       editing: false,
-//       cookbook: cookbook,
-//       isAuthenticated: isLoggedIn,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
 exports.authorize = async (req, res, next) => {
-  console.log("go to see the response");
   const userId = req.userId;
   const cookbookId = req.params.cookbookId;
-  console.log(userId);
-  console.log(cookbookId);
-  return res.json({ message: "ok" });
-  // const cookbook = await Cookbook.findAll({ where: { id: cookbookId } });
-  // if (userId !== cookbook.userId) {
-  //   return res.json({ authorized: false });
-  // } else {
-  //   return res.json({ authorized: true });
-  // }
+  const protectionAccess = req.query.accessType;
+  const cookbook = await Cookbook.findAll({ where: { id: cookbookId } });
+  if (!cookbook) {
+    return res.status(404).json({ message: "cookbook not found" });
+  }
+  if (protectionAccess === "addNewRecipe") {
+    if (userId !== cookbook[0].userId) {
+      return res.status(403).json({ message: "not authorized" });
+    } else {
+      return res.status(200).json({ message: "ok" });
+    }
+  }
+  return res.status(500).json({ message: "it failed bro" });
 };
 
 exports.postAddRecipe = async (req, res, next) => {
   const name = req.body.name;
   const description = req.body.description;
   const time = req.body.time;
-  const image = req.body.image;
-  const id = req.params.cookbookId;
+  const image = req.body.imageUrl;
+  const cookbookId = req.params.cookbookId;
+  console.log("from postAdd recipe:", req.body);
   // if (!image) {
   //   return res.status(422).json({
   //     pageTitle: "new recipe",
@@ -57,38 +41,22 @@ exports.postAddRecipe = async (req, res, next) => {
   //   });
   // }
   try {
-    const cookbook = await Cookbook.findByPk(id);
+    const cookbook = await Cookbook.findByPk(cookbookId);
+    console.log(cookbook);
     if (cookbook.userId === req.userId) {
       const recipe = await cookbook.createRecipe({
         name: name,
         description: description,
         time: time,
-        imageUrl: image.path,
+        imageUrl: image,
       });
       console.log("created recipe");
       res.status(200).json({ recipe: recipe, cookbook: cookbook });
     } else {
-      throw new Error("Unauthorized to create recipe");
+      const error = new Error({ message: "Unauthorized to create recipe" });
+      error.status = 403;
+      throw error;
     }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-exports.getEditRecipe = async (req, res, next) => {
-  const cookbookId = req.params.cookbookId;
-  const id = req.params.id;
-  try {
-    const cookbook = await Cookbook.findByPk(cookbookId);
-    const recipe = await Recipe.findByPk(id);
-    res.render("add-recipe", {
-      pageTitle: "Edit Product",
-      editing: editMode,
-      path: "/edit-product",
-      recipe: recipe,
-      cookbook: cookbook,
-      isAuthenticated: isLoggedIn,
-    });
   } catch (err) {
     console.log(err);
   }
@@ -139,33 +107,26 @@ exports.postDeleteRecipe = async (req, res, next) => {
   }
 };
 
-exports.getAddCookbook = (req, res, next) => {
-  const isLoggedIn = req.session.isLoggedIn;
-  res.render("../views/new-cookbook", {
-    pageTitle: "new cookbook",
-    isAuthenticated: isLoggedIn,
-  });
-};
-
 exports.postAddCookbook = async (req, res, next) => {
-  const user = new User({
-    email: "somemail@gmail.com",
-    password: "Adou232323@",
-  });
   const name = req.body.name;
   const theme = req.body.theme;
   const image = req.body.image;
   const description = req.body.description;
+  const id = req.userId;
   try {
-    const results = await user.createCookbook({
+    const user = await User.findAll({ where: { id: id } });
+    if (!user) {
+      res.status(401).json({ message: "Not Authenticated" });
+    }
+    const results = await user[0].createCookbook({
       name: name,
       theme: theme,
       imageUrl: image,
       description: description,
     });
-    console.log(results);
-    res.redirect("/cookbooks");
+    res.status(200).json({ cookbook: results });
   } catch (err) {
+    const error = new Error({ message: "could not add a new cookbook" });
     console.log(err);
   }
 };
@@ -173,8 +134,15 @@ exports.postAddCookbook = async (req, res, next) => {
 exports.deleteCookbook = async (req, res, next) => {
   try {
     const id = req.params.cookbookId;
+    const userId = req.userId;
     const cookbook = await Cookbook.findByPk(id);
-    fileHelper.deleteFile(cookbook.imageUrl);
+    if (!cookbook) {
+      res.status(401).json({ message: "Not cookbook found" });
+    }
+    if (cookbook.userId !== userId) {
+      res.status(403).json({ message: "Not authorized !" });
+    }
+    // fileHelper.deleteFile(cookbook.imageUrl);
     await cookbook.destroy();
     res.status(200).json({ message: "success" });
   } catch (err) {

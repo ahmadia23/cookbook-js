@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 const { validationResult } = require("express-validator/check");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 const User = require("../models/user");
 
@@ -13,25 +14,6 @@ const transporter = nodemailer.createTransport(
     },
   })
 );
-const crypto = require("crypto");
-
-exports.getLogin = (req, res, next) => {
-  let message = req.flash("error");
-  if (message.length > 0) {
-    message = message[0];
-  } else {
-    message = null;
-  }
-  res.json({
-    pageTitle: "Login Page",
-    errorMessage: message,
-    oldInput: {
-      email: "",
-      password: "",
-    },
-    validationErrors: [],
-  });
-};
 
 exports.getReset = (req, res, next) => {
   let message = req.flash("error");
@@ -69,21 +51,6 @@ exports.postReset = async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
-};
-
-exports.getSignup = (req, res, next) => {
-  let message = req.flash("error");
-  if (message.length > 0) {
-    message = message[0];
-  } else {
-    message = null;
-  }
-  res.render("../views/authentification/signup", {
-    pageTitle: "Login Page",
-    errorMessage: message,
-    oldInput: { email: "", password: "", confirmedPassword: "" },
-    validationErrors: [],
-  });
 };
 
 exports.postLogin = async (req, res, next) => {
@@ -131,50 +98,6 @@ exports.postLogin = async (req, res, next) => {
     res.redirect("/login");
   }
 };
-
-// exports.postSignup = (req, res, next) => {
-//   const email = req.body.email;
-//   const password = req.body.password;
-//   const confirmedPassword = req.body.confirmedPassword;
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.status(422).json({
-//       pageTitle: "Login Page",
-//       errorMessage: errors.array()[0].msg,
-//       oldInput: {
-//         email: email,
-//         password: password,
-//         confirmedPassword: confirmedPassword,
-//       },
-//       validationErrors: errors.array(),
-//     });
-//   }
-//   User.findAll({ where: { email: email } })
-//     .then(([userRec]) => {
-//       if (userRec) {
-//         console.log("pooost siiignup");
-//         return res.json({
-//           errorMessage: "Email already exists, please pick another one !",
-//         });
-//       }
-//       return bcrypt
-//         .hash(password, 12)
-//         .then((hashedPassword) => {
-//           const user = new User({
-//             email: email,
-//             password: hashedPassword,
-//           });
-//           user.createSaving();
-//           return user.save();
-//         })
-//         .catch((err) => {
-//           console.log(err);
-//         });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
 
 exports.postSignup = async (req, res, next) => {
   const email = req.body.email;

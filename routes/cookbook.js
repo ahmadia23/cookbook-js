@@ -7,7 +7,7 @@ const isAuth = require("../middleware/is-auth");
 
 const router = express.Router();
 
-router.get("/allow/cookbookId", isAuth, adminController.authorize);
+router.get("/allow/:cookbookId", isAuth, adminController.authorize);
 router.get("/saved-recipes", isAuth, recipesController.getSavingRecipes);
 router.post("/cookbooks/recipes", isAuth, adminController.postSaving);
 router.get("/my-recipes", isAuth, recipesController.getMyRecipes);
@@ -17,7 +17,7 @@ router.get(
   isAuth,
   cookbookController.getCookbookRecipes
 );
-router.get("/cookbooks/:cookbookId/", cookbookController.getCookbook);
+router.get("/cookbooks/:cookbookId/", isAuth, cookbookController.getCookbook);
 
 router.get("/recipes/:id", recipesController.getRecipe);
 
@@ -31,22 +31,16 @@ router.get("/cookbooks", cookbookController.getCookbooks);
 router.post(
   "/cookbooks/:cookbookId/add-recipe",
   [
-    body("name").isLength({ min: 5 }).isAlphanumeric().trim(),
-    body("description").isLength({ min: 5 }).isAlphanumeric().trim(),
-    body("time").isIn([0, 60]).isAlphanumeric().trim(),
+    // body("name").isLength({ min: 5 }).isAlphanumeric().trim(),
+    // body("description").isLength({ min: 5 }).isAlphanumeric().trim(),
+    // body("time").isIn([0, 60]).isAlphanumeric().trim(),
   ],
   isAuth,
   adminController.postAddRecipe
 );
 
-router.get("/new-cookbook", isAuth, adminController.getAddCookbook);
 router.post("/new-cookbook", isAuth, adminController.postAddCookbook);
 
-router.get(
-  "/cookbooks/:cookbookId/edit-recipe/:id",
-  isAuth,
-  adminController.getEditRecipe
-);
 router.post(
   "/cookbooks/:cookbookId/edit-recipe/:id",
   isAuth,

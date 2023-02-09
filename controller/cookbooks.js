@@ -15,15 +15,20 @@ exports.getCookbooks = async (req, res, next) => {
 
 exports.getCookbook = async (req, res, next) => {
   const id = req.params.cookbookId;
+  const userId = req.userId;
   try {
     const cookbook = await Cookbook.findByPk(id);
-    if (!cookbook) {
-      res.status(404).json({ message: "No found" });
+    const cookbookData = cookbook.dataValues;
+    if (!cookbookData) {
+      res.status(404).json({ message: "Not found" });
     }
+
+    const adminMode = userId === cookbookData.userId;
     res.json({
       pageTitle: cookbook.name,
       cookbook: cookbook,
       recipes: cookbook.recipes,
+      adminMode: adminMode,
     });
   } catch (error) {
     console.log(error);
@@ -44,7 +49,7 @@ exports.getCookbookRecipes = async (req, res, next) => {
       pageTitle: cookbook.title,
       cookbook: cookbook,
       recipes: recipes,
-      adminMode: userId === cookbook.id,
+      adminMode: userId === cookbook.userId,
     });
   } catch (error) {
     console.log(error);
