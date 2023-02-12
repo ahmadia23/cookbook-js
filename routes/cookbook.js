@@ -19,7 +19,11 @@ router.get(
 );
 router.get("/cookbooks/:cookbookId/", isAuth, cookbookController.getCookbook);
 
-router.get("/recipes/:id", recipesController.getRecipe);
+router.get(
+  "/cookbooks/:cookbookId/:recipeId",
+  isAuth,
+  recipesController.getRecipe
+);
 
 router.get("/cookbooks", cookbookController.getCookbooks);
 
@@ -48,7 +52,11 @@ router.post(
 );
 
 router.post("/delete-save", isAuth, adminController.postSavingDeleteRecipe);
-router.post("/delete-recipe", isAuth, adminController.postDeleteRecipe);
+router.delete(
+  "/recipes/:recipeId/delete",
+  isAuth,
+  adminController.postDeleteRecipe
+);
 router.delete("/cookbooks/:cookbookId", isAuth, adminController.deleteCookbook);
 
 module.exports = router;

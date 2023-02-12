@@ -7,12 +7,17 @@ exports.authorize = async (req, res, next) => {
   const userId = req.userId;
   const cookbookId = req.params.cookbookId;
   const protectionAccess = req.query.accessType;
-  const cookbook = await Cookbook.findAll({ where: { id: cookbookId } });
+  const cookbookData = await Cookbook.findAll({ where: { id: cookbookId } });
+  const cookbook = cookbookData[0].dataValues;
+  console.log(cookbook);
   if (!cookbook) {
     return res.status(404).json({ message: "cookbook not found" });
   }
-  if (protectionAccess === "addNewRecipe") {
-    if (userId !== cookbook[0].userId) {
+  if (
+    protectionAccess === "addNewRecipe" ||
+    protectionAccess === "deleteRecipe"
+  ) {
+    if (userId !== cookbook.userId) {
       return res.status(403).json({ message: "not authorized" });
     } else {
       return res.status(200).json({ message: "ok" });
@@ -90,18 +95,20 @@ exports.postEditRecipe = async (req, res, next) => {
 };
 
 exports.postDeleteRecipe = async (req, res, next) => {
-  const id = req.body.id;
-  const cookbookId = req.params.cookbookId;
+  const recipeId = req.params.recipeId;
+  console.log(recipeId);
+  console.log("helloooo");
   try {
-    const recipe = await Recipe.findByPk(id);
+    const recipe = await Recipe.findByPk(recipeId);
+    console.log(recipe);
     const cookbook = await recipe.getCookbook();
-    if (cookbook.userId !== req.user.id) {
+    if (cookbook.userId !== req.userId) {
       console.log(cookbook);
-      return res.redirect(`/recipes/${recipe.id}`);
+      return res.status(403).json({ message: "Not authorized" });
     }
     await recipe.destroy();
     console.log("Recipe deleted");
-    res.redirect(`/cookbooks/${cookbookId}/recipes`);
+    res.status(200).json({ message: "successfully deleted" });
   } catch (err) {
     console.log("Error deleting recipe: ", err.message);
   }
