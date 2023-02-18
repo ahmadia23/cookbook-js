@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.get("/allow/:cookbookId", isAuth, adminController.authorize);
 router.get("/saved-recipes", isAuth, recipesController.getSavingRecipes);
-router.post("/cookbooks/recipes", isAuth, adminController.postSaving);
 router.get("/my-recipes", isAuth, recipesController.getMyRecipes);
 
 router.get(
@@ -43,13 +42,8 @@ router.post(
   adminController.postAddRecipe
 );
 
+router.put("/recipes/:recipeId/edit", isAuth, adminController.postEditRecipe);
 router.post("/new-cookbook", isAuth, adminController.postAddCookbook);
-
-router.post(
-  "/cookbooks/:cookbookId/edit-recipe/:id",
-  isAuth,
-  adminController.postEditRecipe
-);
 
 router.post("/delete-save", isAuth, adminController.postSavingDeleteRecipe);
 router.delete(
@@ -59,4 +53,5 @@ router.delete(
 );
 router.delete("/cookbooks/:cookbookId", isAuth, adminController.deleteCookbook);
 
+router.post("/cookbooks/recipes", isAuth, adminController.postSaving);
 module.exports = router;

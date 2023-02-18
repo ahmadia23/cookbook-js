@@ -9,7 +9,6 @@ exports.getRecipe = async (req, res, next) => {
 
   Recipe.findByPk(recipeId)
     .then((recipe) => {
-      console.log(cookbook);
       const adminMode = cookbook.userId === req.userId;
       res.json({
         pageTitle: recipe.name,

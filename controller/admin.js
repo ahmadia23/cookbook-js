@@ -9,7 +9,6 @@ exports.authorize = async (req, res, next) => {
   const protectionAccess = req.query.accessType;
   const cookbookData = await Cookbook.findAll({ where: { id: cookbookId } });
   const cookbook = cookbookData[0].dataValues;
-  console.log(cookbook);
   if (!cookbook) {
     return res.status(404).json({ message: "cookbook not found" });
   }
@@ -32,7 +31,7 @@ exports.postAddRecipe = async (req, res, next) => {
   const time = req.body.time;
   const image = req.body.imageUrl;
   const cookbookId = req.params.cookbookId;
-  console.log("from postAdd recipe:", req.body);
+
   // if (!image) {
   //   return res.status(422).json({
   //     pageTitle: "new recipe",
@@ -47,7 +46,6 @@ exports.postAddRecipe = async (req, res, next) => {
   // }
   try {
     const cookbook = await Cookbook.findByPk(cookbookId);
-    console.log(cookbook);
     if (cookbook.userId === req.userId) {
       const recipe = await cookbook.createRecipe({
         name: name,
@@ -68,27 +66,31 @@ exports.postAddRecipe = async (req, res, next) => {
 };
 
 exports.postEditRecipe = async (req, res, next) => {
-  const id = req.body.id;
-  const cookbookId = req.params.cookbookId;
+  console.log("hellooooo");
+  const recipeId = req.params.recipeId;
   const name = req.body.name;
   const description = req.body.description;
   const time = req.body.time;
-  const url = req.body.url;
+  const ImageUrl = req.body.ImageUrl;
 
   try {
-    const recipe = await Recipe.findByPk(id);
-    const cookbook = await recipe.getCookbook();
-    if (cookbook.userId !== req.user.id) {
-      return res.redirect("/");
+    const recipe = await Recipe.findByPk(recipeId);
+    const cookbookData = await recipe.getCookbook();
+    const cookbook = cookbookData.dataValues;
+    console.log("from posteditrecipe recipe is :", recipe);
+    console.log("from posteditrecipe cookbook is : ", cookbook);
+
+    if (cookbook.userId !== req.userId) {
+      return res.status(403).json({ message: "forbidden" });
     }
     await recipe.update({
       name: name,
       description: description,
       time: time,
-      url: url,
+      imageUrl: ImageUrl,
     });
     console.log("UPDATED Recipe!");
-    res.redirect(`/cookbooks/${cookbookId}/recipes`);
+    res.status(200).json({ message: `success, updated recipes` });
   } catch (err) {
     console.log(err);
   }
@@ -97,13 +99,12 @@ exports.postEditRecipe = async (req, res, next) => {
 exports.postDeleteRecipe = async (req, res, next) => {
   const recipeId = req.params.recipeId;
   console.log(recipeId);
-  console.log("helloooo");
   try {
     const recipe = await Recipe.findByPk(recipeId);
     console.log(recipe);
     const cookbook = await recipe.getCookbook();
     if (cookbook.userId !== req.userId) {
-      console.log(cookbook);
+      console.log("cookbook found", cookbook);
       return res.status(403).json({ message: "Not authorized" });
     }
     await recipe.destroy();
