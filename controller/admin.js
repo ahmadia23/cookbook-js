@@ -2,6 +2,7 @@ const Recipe = require("../models/recipe");
 const Cookbook = require("../models/cookbook");
 const fileHelper = require("../util/file");
 const User = require("../models/user");
+const Saving = require("../models/saving");
 
 exports.authorize = async (req, res, next) => {
   const userId = req.userId;
@@ -160,29 +161,37 @@ exports.deleteCookbook = async (req, res, next) => {
 
 exports.postSaving = async (req, res, next) => {
   try {
-    const recipeId = req.body.id;
-    const saving = await req.user.getSaving();
-    const recipes = await saving.getRecipes({ where: { id: recipeId } });
+    const recipeId = req.body.recipeId;
+    const userData = await User.findByPk(req.userId);
+    const user = userData.dataValues;
+    const userSaving = await Saving.findOne({
+      where: { userId: user.id },
+      include: Recipe,
+    });
+    console.log(userSaving);
+    const recipes = await userSaving.recipes;
     let recipe;
+    console.log("recipes", recipes);
     if (recipes.length > 0) {
       recipe = recipes[0];
     }
     if (recipe) {
       alert("already added");
-      res.redirect("/saved-recipes");
+      res.status(403).json({ message: "already added" });
     } else {
       recipe = await Recipe.findByPk(recipeId);
-      await saving.addRecipe(recipe, {
+      await userSaving.addRecipe(recipe, {
         through: {
-          password: req.user.password,
-          email: req.user.email,
+          password: user.password,
+          email: user.email,
         },
       });
     }
     console.log("Saved Recipe");
     res.status(200).json({ message: "success" });
   } catch (err) {
-    res.status(500).json({ message: "deleting failed" });
+    console.log(err);
+    res.status(500).json({ message: "saving failed" });
   }
 };
 

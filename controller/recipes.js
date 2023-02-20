@@ -1,5 +1,6 @@
 const Recipe = require("../models/recipe");
 const Cookbook = require("../models/cookbook");
+const User = require("../models/user");
 
 exports.getRecipe = async (req, res, next) => {
   const cookbookId = req.params.cookbookId;
@@ -34,19 +35,18 @@ exports.getRecipe = async (req, res, next) => {
 //     .catch(err => console.log(err));
 // }
 
-exports.getSavingRecipes = (req, res, next) => {
+exports.getSavingRecipes = async (req, res, next) => {
   const isLoggedIn = req.session.isLoggedIn;
-  req.user
+  const user = await User.findOne({ where: { id: req.userId } });
+  user
     .getSaving()
     .then((saving) => {
       return saving
         .getRecipes()
         .then((recipes) => {
           console.log(recipes);
-          res.render("savings", {
-            pageTitle: "My recipes to make",
+          res.json({
             recipes: recipes,
-            isAuthenticated: isLoggedIn,
           });
         })
         .catch((err) => {

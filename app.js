@@ -118,6 +118,7 @@ User.hasMany(Cookbook, { constraints: true, onDelete: "CASCADE" });
 Cookbook.hasMany(Recipe);
 Cookbook.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasOne(Saving, { constraints: true, onDelete: "CASCADE" });
+Saving.belongsTo(User);
 Saving.belongsToMany(Recipe, { through: SavingItem });
 Recipe.belongsToMany(Saving, { through: SavingItem });
 

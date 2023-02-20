@@ -4,6 +4,7 @@ const sendgridTransport = require("nodemailer-sendgrid-transport");
 const { validationResult } = require("express-validator/check");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const Saving = require("../models/saving");
 
 const User = require("../models/user");
 
@@ -14,6 +15,12 @@ const transporter = nodemailer.createTransport(
     },
   })
 );
+
+User.prototype.createSaving = async function () {
+  const saving = await Saving.create();
+  await this.setSaving(saving); // set the saving association for the user
+  return saving;
+};
 
 exports.getReset = (req, res, next) => {
   let message = req.flash("error");
@@ -130,8 +137,10 @@ exports.postSignup = async (req, res, next) => {
       email: email,
       password: hashedPassword,
     });
-    await user.createSaving();
     await user.save();
+    await user.createSaving({ userId: user.id });
+    const saving = await user.getSaving();
+    console.log(saving);
     req.flash("success", "Signup succeeded, Please login");
     res.json({
       message: "successfully signed up",
@@ -144,6 +153,7 @@ exports.postSignup = async (req, res, next) => {
     // });
   } catch (err) {
     console.log(err);
+    return res.status(500).json({ errorMessage: err });
   }
 };
 
