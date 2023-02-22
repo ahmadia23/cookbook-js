@@ -3,6 +3,7 @@ const Cookbook = require("../models/cookbook");
 const fileHelper = require("../util/file");
 const User = require("../models/user");
 const Saving = require("../models/saving");
+const SavingItem = require("../models/saving-item");
 
 exports.authorize = async (req, res, next) => {
   const userId = req.userId;
@@ -161,30 +162,21 @@ exports.deleteCookbook = async (req, res, next) => {
 
 exports.postSaving = async (req, res, next) => {
   try {
-    const recipeId = req.body.recipeId;
+    const recipeId = req.params.recipeId;
     const userData = await User.findByPk(req.userId);
     const user = userData.dataValues;
-    const userSaving = await Saving.findOne({
-      where: { userId: user.id },
-      include: Recipe,
+    const recipeSaved = await SavingItem.findOne({
+      where: { recipeId: recipeId },
     });
-    console.log(userSaving);
-    const recipes = await userSaving.recipes;
-    let recipe;
-    console.log("recipes", recipes);
-    if (recipes.length > 0) {
-      recipe = recipes[0];
-    }
-    if (recipe) {
-      alert("already added");
-      res.status(403).json({ message: "already added" });
+    console.log("from post saving", recipeSaved);
+    if (recipeSaved) {
+      return res.status(403).json({ message: "already added" });
     } else {
-      recipe = await Recipe.findByPk(recipeId);
-      await userSaving.addRecipe(recipe, {
-        through: {
-          password: user.password,
-          email: user.email,
-        },
+      recipe = await Recipe.findOne({ where: { id: recipeId } });
+      userSaving = await Saving.findOne({ where: { userId: req.userId } });
+      const savingRecipe = await SavingItem.create({
+        savingId: userSaving.id,
+        recipeId: recipe.id,
       });
     }
     console.log("Saved Recipe");
