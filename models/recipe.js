@@ -18,8 +18,12 @@ const Recipe = sequelize.define("recipe", {
     type: DataTypes.TEXT("long"),
     allowNull: false,
   },
+  steps: {
+    type: DataTypes.TEXT("long"),
+    allowNull: false,
+  },
   time: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   ingredients: {

@@ -126,7 +126,6 @@ sequelize
   .sync()
   .then((saving) => {
     app.listen(8080);
-    // User.create({email: "ahmadou92@hotmail.fr", password: "Adou232323"})
   })
   .catch((err) => {
     console.log(err);

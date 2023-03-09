@@ -32,6 +32,8 @@ exports.postAddRecipe = async (req, res, next) => {
   const description = req.body.description;
   const time = req.body.time;
   const image = req.body.imageUrl;
+  const ingredients = req.body.ingredients;
+  const steps = req.body.steps;
   const cookbookId = req.params.cookbookId;
 
   // if (!image) {
@@ -54,6 +56,8 @@ exports.postAddRecipe = async (req, res, next) => {
         description: description,
         time: time,
         imageUrl: image,
+        ingredients: ingredients,
+        steps: steps,
       });
       console.log("created recipe");
       res.status(200).json({ recipe: recipe, cookbook: cookbook });
@@ -74,6 +78,8 @@ exports.postEditRecipe = async (req, res, next) => {
   const description = req.body.description;
   const time = req.body.time;
   const ImageUrl = req.body.ImageUrl;
+  const ingredients = req.body.ingredients;
+  const steps = req.body.steps;
 
   try {
     const recipe = await Recipe.findByPk(recipeId);
@@ -90,6 +96,8 @@ exports.postEditRecipe = async (req, res, next) => {
       description: description,
       time: time,
       imageUrl: ImageUrl,
+      ingredients: ingredients,
+      steps: steps,
     });
     console.log("UPDATED Recipe!");
     res.status(200).json({ message: `success, updated recipes` });
