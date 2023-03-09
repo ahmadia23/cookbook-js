@@ -20,7 +20,6 @@ const Recipe = sequelize.define("recipe", {
   },
   steps: {
     type: DataTypes.TEXT("long"),
-    allowNull: false,
   },
   time: {
     type: DataTypes.STRING,

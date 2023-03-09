@@ -197,12 +197,13 @@ exports.postSaving = async (req, res, next) => {
 
 exports.postSavingDeleteRecipe = async (req, res, next) => {
   try {
-    const recipeId = req.body.id;
+    console.log("well done");
+    const recipeId = req.params.recipeId;
     const saving = await req.user.getSaving();
     const recipes = await saving.getRecipes({ where: { id: recipeId } });
     const recipe = recipes[0];
     await recipe.savingItem.destroy();
-    res.redirect("/saved-recipes");
+    res.status(200).json({ message: "success" });
   } catch (err) {
     console.log(err);
   }

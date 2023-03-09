@@ -45,7 +45,11 @@ router.post(
 router.put("/recipes/:recipeId/edit", isAuth, adminController.postEditRecipe);
 router.post("/new-cookbook", isAuth, adminController.postAddCookbook);
 
-router.post("/delete-save", isAuth, adminController.postSavingDeleteRecipe);
+router.delete(
+  "savings/:recipeId/delete-saving",
+  isAuth,
+  adminController.postSavingDeleteRecipe
+);
 router.delete(
   "/recipes/:recipeId/delete",
   isAuth,
