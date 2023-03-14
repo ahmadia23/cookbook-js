@@ -122,10 +122,13 @@ Saving.belongsTo(User);
 Saving.belongsToMany(Recipe, { through: SavingItem });
 Recipe.belongsToMany(Saving, { through: SavingItem });
 
+const PORT = process.env.PORT || 3000;
 sequelize
   .sync()
   .then((saving) => {
-    app.listen(8080);
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}.`);
+    });
   })
   .catch((err) => {
     console.log(err);
