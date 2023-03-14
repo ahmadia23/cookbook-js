@@ -2,8 +2,6 @@ const fs = require("fs");
 
 const Sequelize = require("sequelize");
 
-console.log(process.env);
-
 const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL, {
   dialect: "mysql",
   protocol: "mysql",
