@@ -1,20 +1,11 @@
 const bcrypt = require("bcryptjs");
-const nodemailer = require("nodemailer");
-const sendgridTransport = require("nodemailer-sendgrid-transport");
+
 const { validationResult } = require("express-validator/check");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const Saving = require("../models/saving");
 
 const User = require("../models/user");
-
-const transporter = nodemailer.createTransport(
-  sendgridTransport({
-    auth: {
-      api_key: process.env.MAIL_API_KEY,
-    },
-  })
-);
 
 User.prototype.createSaving = async function () {
   const saving = await Saving.create();
