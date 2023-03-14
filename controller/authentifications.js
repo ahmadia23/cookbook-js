@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-const { validationResult } = require("express-validator/check");
+const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const Saving = require("../models/saving");
