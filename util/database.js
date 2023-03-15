@@ -11,6 +11,7 @@ const sequelize = new Sequelize(
   {
     dialect: "mysql",
     protocol: "mysql",
+    socketPath: "/var/run/mysqld/mysqld.sock",
     logging: false,
     dialectOptions: {
       ssl: {
