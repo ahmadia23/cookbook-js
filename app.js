@@ -8,12 +8,13 @@ const session = require("express-session");
 
 const sequelize = require("./util/database");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
-const dotenv = require("dotenv").config();
 
 const flash = require("connect-flash");
 const multer = require("multer");
-const cors = require("cors");
+const helmet = require("helmet");
+const compression = require("compression");
 
+//file handler for image, formatting url
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "images");
@@ -23,6 +24,7 @@ const fileStorage = multer.diskStorage({
   },
 });
 
+//filtering image type
 const fileFilter = (req, file, cb) => {
   if (
     file.mimetype === "image/png" ||
@@ -35,25 +37,22 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const cookbookController = require("./controller/cookbooks");
-const recipesController = require("./controller/recipes");
-const adminController = require("./controller/recipes");
 const errorController = require("./controller/error");
 
+//models
 const Recipe = require("./models/recipe");
 const Cookbook = require("./models/cookbook");
 const User = require("./models/user");
 const Saving = require("./models/saving");
 const SavingItem = require("./models/saving-item");
 
-const ejs = require("ejs");
-
+//routes
 const authRoutes = require("./routes/auth.js");
 const cookbookRoutes = require("./routes/cookbook.js");
 
+//endpoints parameters
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  // res.setHeader("Access-Control-Allow-Credentials", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "OPTIONS, GET, POST, PUT, PATCH, DELETE"
@@ -62,6 +61,9 @@ app.use((req, res, next) => {
   next();
 });
 
+//middlewares
+app.use(helmet());
+app.use(compression());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   multer({
@@ -121,3 +123,15 @@ User.hasOne(Saving, { constraints: true, onDelete: "CASCADE" });
 Saving.belongsTo(User);
 Saving.belongsToMany(Recipe, { through: SavingItem });
 Recipe.belongsToMany(Saving, { through: SavingItem });
+
+const PORT = process.env.PORT || 3000;
+sequelize
+  .sync()
+  .then((saving) => {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}.`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
