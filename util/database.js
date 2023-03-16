@@ -2,8 +2,6 @@ const fs = require("fs");
 
 const Sequelize = require("sequelize");
 
-console.log(process.env);
-
 const sequelize = new Sequelize(
   process.env.DATABASE_NAME,
   process.env.DATABASE_USERNAME,
