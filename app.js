@@ -124,7 +124,7 @@ Saving.belongsTo(User);
 Saving.belongsToMany(Recipe, { through: SavingItem });
 Recipe.belongsToMany(Saving, { through: SavingItem });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 sequelize
   .sync()
   .then((saving) => {
