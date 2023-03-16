@@ -65,6 +65,7 @@ exports.postLogin = async (req, res, next) => {
     });
   }
 
+  console.log("hello");
   try {
     const user = await User.findAll({ where: { email: email } });
     if (!user[0]) {

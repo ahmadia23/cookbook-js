@@ -1,15 +1,16 @@
 const fs = require("fs");
+const env = require("dotenv").config().parsed;
 
 const Sequelize = require("sequelize");
 
 const sequelize = new Sequelize(
-  process.env.DATABASE_NAME,
-  process.env.DATABASE_USERNAME,
-  process.env.DATABASE_PASSWORD,
+  process.env.DATABASE_NAME || env.DATABASE_NAME,
+  process.env.DATABASE_USERNAME || env.DATABASE_USERNAME,
+  process.env.DATABASE_PASSWORD || env.DATABASE_PASSWORD,
   {
     dialect: "mysql",
     protocol: "mysql",
-    host: process.env.DATABASE_HOST,
+    host: process.env.DATABASE_HOST || env.DATABASE_HOST,
     logging: false,
     dialectOptions: {
       ssl: {
