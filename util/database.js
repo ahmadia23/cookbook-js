@@ -11,6 +11,7 @@ const sequelize = new Sequelize(
   {
     dialect: "mysql",
     protocol: "mysql",
+    host: process.env.DATABASE_HOST,
     logging: false,
     dialectOptions: {
       ssl: {
