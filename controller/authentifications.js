@@ -65,7 +65,6 @@ exports.postLogin = async (req, res, next) => {
     });
   }
 
-  console.log("hello");
   try {
     const user = await User.findAll({ where: { email: email } });
     if (!user[0]) {
@@ -137,50 +136,13 @@ exports.postSignup = async (req, res, next) => {
     res.json({
       message: "successfully signed up",
     });
-    // await transporter.sendMail({
-    //   to: email,
-    //   from: "contact@my-cookbook.com",
-    //   subject: "Signup succeeded !",
-    //   html: "<h1> You successfully signup ! </h1>",
-    // });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ errorMessage: err });
   }
 };
 
-exports.postLogout = (req, res, next) => {
-  console.log("log ouuuuut");
-  req.session.destroy((err) => {
-    console.log(err);
-    res.redirect("/");
-  });
-};
-
-exports.getNewPassword = async (req, res, next) => {
-  const token = req.params.token;
-  try {
-    const user = await User.findByPk(1);
-    console.log(user[0]);
-    let message = req.flash("error");
-    if (message.length > 0) {
-      message = message[0];
-    } else {
-      message = null;
-    }
-    res.render("../views/authentification/new-password", {
-      pageTitle: "New password",
-      errorMessage: message,
-      userId: user[0].id,
-      token: token,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 exports.postNewPassword = async (req, res, next) => {
-  console.log("hello from new password");
   const newPassword = req.body.password;
   const userId = req.body.userId;
   console.log(req.body);

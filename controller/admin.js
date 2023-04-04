@@ -35,18 +35,6 @@ exports.postAddRecipe = async (req, res, next) => {
   const steps = req.body.steps;
   const cookbookId = req.params.cookbookId;
 
-  // if (!image) {
-  //   return res.status(422).json({
-  //     pageTitle: "new recipe",
-  //     recipe: {
-  //       name: name,
-  //       theme: theme,
-  //       description: description,
-  //     },
-  //     errorMessage: "Attached file is not an image !.",
-  //     validationErrors: [],
-  //   });
-  // }
   try {
     const cookbook = await Cookbook.findByPk(cookbookId);
     if (cookbook.userId === req.userId) {
@@ -84,8 +72,6 @@ exports.postEditRecipe = async (req, res, next) => {
     const recipe = await Recipe.findByPk(recipeId);
     const cookbookData = await recipe.getCookbook();
     const cookbook = cookbookData.dataValues;
-    console.log("from posteditrecipe recipe is :", recipe);
-    console.log("from posteditrecipe cookbook is : ", cookbook);
 
     if (cookbook.userId !== req.userId) {
       return res.status(403).json({ message: "forbidden" });
@@ -110,10 +96,8 @@ exports.postDeleteRecipe = async (req, res, next) => {
   console.log(recipeId);
   try {
     const recipe = await Recipe.findByPk(recipeId);
-    console.log(recipe);
     const cookbook = await recipe.getCookbook();
     if (cookbook.userId !== req.userId) {
-      console.log("cookbook found", cookbook);
       return res.status(403).json({ message: "Not authorized" });
     }
     await recipe.destroy();
@@ -207,37 +191,3 @@ exports.postSavingDeleteRecipe = async (req, res, next) => {
     console.log(err);
   }
 };
-
-// exports.postAddCookbook =  (req,res, next) => {
-//   const name = req.body.name;
-//   const theme = req.body.theme;
-//   const image = req.file;
-//   const description = req.body.description
-//   if (!image){
-//     return res.status(422).render("../views/new-cookbook", {
-//       pageTitle: "new cookbook",
-//       isAuthenticated: isLoggedIn,
-//       cookbook: {
-//         name: name,
-//         theme: theme,
-//         description: description
-//       },
-//       errorMessage: 'Attached file is not an image !.',
-//       validationErrors: []
-//     });
-//   }
-//   const imageUrl = image.path;
-
-//   req.user.createCookbook({
-//     name: name,
-//     theme: theme,
-//     imageUrl: imageUrl,
-//     description: description
-//   })
-//   .then(results => {
-//     console.log("created Cookbook");
-//     res.redirect("/cookbooks");
-//   }).catch(err => {
-//     console.log(err)
-//   });
-// }
