@@ -109,9 +109,15 @@ exports.postDeleteRecipe = async (req, res, next) => {
 };
 
 exports.postAddCookbook = async (req, res, next) => {
+  if (!req.file) {
+    const error = new Error("no image provided");
+    error.statusCode = 422;
+    throw error;
+  }
+
   const name = req.body.name;
   const theme = req.body.theme;
-  const image = req.body.image;
+  const image = req.file.path;
   const description = req.body.description;
   const id = req.userId;
   try {
