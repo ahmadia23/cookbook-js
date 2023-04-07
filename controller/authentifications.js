@@ -56,6 +56,7 @@ exports.postLogin = async (req, res, next) => {
   const password = req.body.password;
 
   const errors = validationResult(req);
+  console.log(errors);
   if (!errors.isEmpty()) {
     return res.status(422).json({
       pageTitle: "Login Page",
