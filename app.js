@@ -5,6 +5,7 @@ const app = express();
 
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const cors = require("cors");
 
 const sequelize = require("./util/database");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
@@ -15,6 +16,7 @@ const helmet = require("helmet");
 const compression = require("compression");
 
 //file handler for image, formatting url
+app.use(cors());
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "images");
@@ -51,18 +53,18 @@ const authRoutes = require("./routes/auth.js");
 const cookbookRoutes = require("./routes/cookbook.js");
 
 //endpoints parameters
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "OPTIONS, GET, POST, PUT, PATCH, DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, Origin, X-Requested-With, Accept"
-  );
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*", "Same-Origin");
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "OPTIONS, GET, POST, PUT, PATCH, DELETE"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Content-Type, Authorization, Origin, X-Requested-With, Accept"
+//   );
+//   next();
+// });
 
 //middlewares
 app.use(helmet());
