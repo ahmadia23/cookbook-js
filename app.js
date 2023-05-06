@@ -64,7 +64,7 @@ app.use((req, res, next) => {
 });
 
 //middlewares
-app.use(helmet());
+// app.use(helmet());
 app.use(compression());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
